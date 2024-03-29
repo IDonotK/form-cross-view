@@ -1,24 +1,23 @@
 import FormField from './FormField';
 import FormNode from './FormNode';
-import { createViewNative, mountViewNative } from './views/native';
 import * as utils from './utils';
 import Events from './Events';
 import * as validator from './validator';
-
-export type Descriptor = { [k: string]: any }
-
-export type DescriptorCompiled = { [k: string]: any }
-
-export type Styles = { [k: string]: any }
+import {
+  Descriptor,
+  DescriptorCompiled,
+} from './validator';
 
 export class Form {
   container: HTMLElement;
 
-  createView: (node: FormNode, styles: Styles) => void;
+  createView: (node: FormNode) => void;
 
-  mount: (formInstance: Form) => void;
+  mountView: (form: Form) => void;
 
   events: Events | null = null;
+
+  utils: { [k: string]: Function } = {};
 
   rootFormFiled: FormField | null = null;
 
@@ -28,14 +27,12 @@ export class Form {
 
   errorFields: Map<string, FormField> = new Map();
 
-  utils: { [k: string]: any } = utils;
-
   constructor(
     container: HTMLElement,
     descriptor: Descriptor,
     customize?: {
-      createView?: (node: FormNode, styles: Styles) => void;
-      mount?: (formInstance: Form) => void;
+      createView?: (node: FormNode) => void,
+      mountView?: (form: Form) => void,
     }
   ) {
     if (!container) {
@@ -48,22 +45,26 @@ export class Form {
     this.container = container;
 
     const {
-      createView, mount,
+      createView, mountView,
     } = customize || {};
-    this.createView = createView || createViewNative;
-    this.mount = mount || mountViewNative;
+    // TODO:
+    // this.createView = createView || createViewNative;
+    // this.mountView = mountView || mountViewNative;
+    this.createView = createView || (() => {});
+    this.mountView = mountView || (() => {});
 
     this.events = new Events();
 
+    this.utils = utils;
+
     this._create(descriptor);
-    this.mount(this);
+    this.mountView(this);
   }
 
   private _create(descriptor: Descriptor) {
     const descriptorCompiled = validator.compileDescriptor(
       descriptor,
-      'settings',
-      null
+      'settings'
     );
 
     // console.log('descriptorCompiled', descriptorCompiled);
@@ -75,7 +76,7 @@ export class Form {
     const form = this;
 
     const traverse = (_descriptorCompiled: DescriptorCompiled) => {
-      const { type, fields } = _descriptorCompiled;
+      const { type = '', fields } = _descriptorCompiled;
       const formField = new FormField(_descriptorCompiled, form);
       if (['object', 'array'].includes(type) && fields) {
         Object.keys(fields).forEach((f: string) => {

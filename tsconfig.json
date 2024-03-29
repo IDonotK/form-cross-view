@@ -1,7 +1,9 @@
 {
 	"compileOnSave": true,
-	"include": ["./src/**/*"],
 	"compilerOptions": {
+		"types": [
+      "vite/client"
+    ],
 		"target": "ESNext",
 		"useDefineForClassFields": true,
 		"module": "ESNext",

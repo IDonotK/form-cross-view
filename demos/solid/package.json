@@ -12,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "solid-js": "^1.8.15"
+    "solid-js": "^1.8.15",
+    "form-cross-view-core": "workspace:*",
+    "form-cross-view-solid": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

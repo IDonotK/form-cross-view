@@ -1,11 +1,13 @@
 import { cloneDeep } from 'lodash';
 
-import { Form, DescriptorCompiled } from './Form';
+import { Form } from './Form';
 import FormNode from './FormNode';
-import { genId } from './utils';
 import * as validator from './validator';
+import {
+  DescriptorCompiled,
+  FieldValidateError as FormFieldError,
+} from './validator';
 
-export type FormFieldError = { field: string; fieldValue: any; message: string }
 
 export default class FormField {
   id: string;
@@ -14,9 +16,7 @@ export default class FormField {
 
   name: string;
 
-  descriptor: any;
-
-  descriptorCompiled: DescriptorCompiled;
+  comment: string;
 
   private _valueInit: any;
 
@@ -24,56 +24,61 @@ export default class FormField {
 
   private _orderInit: number = 0;
 
-  children: FormField[] = [];
+  path: string;
 
-  node: FormNode;
+  isArrayItem: boolean;
+
+  descriptor: any;
+
+  descriptorCompiled: DescriptorCompiled;
 
   form: Form;
-
-  parent: FormField | null = null;
 
   isDirty: boolean = false;
 
   error: FormFieldError[] | null = null;
 
-  path: string;
+  node: FormNode;
 
-  utils: { [k: string]: any } = {};
+  parent: FormField | null = null;
 
-  isArrayItem: boolean;
+  children: FormField[] = [];
+
+  utils: { [k: string]: Function } = {};
 
   constructor(descriptorCompiled: DescriptorCompiled, form: Form) {
     this.form = form;
     this.utils = form.utils;
-    this.id = genId();
-    this.form.formFields.set(this.id, this);
-
-    this.descriptorCompiled = descriptorCompiled;
+    this.id = form.utils.genId();
+    form.formFields.set(this.id, this);
 
     const {
-      type, fieldName, defaultValue: value, descriptor, path, isArrayItem, order,
+      type, fieldName, comment, defaultValue, order, path, isArrayItem, descriptor,
     } = descriptorCompiled;
-    this.type = type;
-    this.name = fieldName;
-    this.descriptor = descriptor;
-    this._valueInit = value;
-    this._value = value;
-    this._orderInit = order;
-    this.path = path;
-    this.isArrayItem = isArrayItem;
 
-    this.node = new FormNode(descriptorCompiled, this);
+    this.descriptorCompiled = descriptorCompiled;
+    this.type = type ?? '';
+    this.name = fieldName ?? '';
+    this.comment = comment ?? '';
+    this._valueInit = defaultValue;
+    this._value = defaultValue;
+    this._orderInit = order ?? 0;
+    this.path = path ?? '';
+    this.isArrayItem = isArrayItem ?? false;
+    this.descriptor = descriptor;
+
+    this.node = new FormNode(this);
   }
 
   newChild(descriptorCompiled: DescriptorCompiled) {
     const { form } = this;
     const numChild = this.children.length;
-    descriptorCompiled.fieldName = numChild;
-    const { path: pathRootOrigin } = descriptorCompiled;
-    const pathRootNew = pathRootOrigin.replace(/([^.]+)$/, numChild);
+    descriptorCompiled.fieldName = String(numChild);
+    const { path: pathRootOrigin = '' } = descriptorCompiled;
+    const pathRootNew = pathRootOrigin.replace(/([^.]+)$/, String(numChild));
 
     const traverse = (_descriptorCompiled: DescriptorCompiled) => {
-      const { type, fields, path } = _descriptorCompiled;
+      const { type = '', fields, path = '' } = _descriptorCompiled;
       _descriptorCompiled.path = path.replace(pathRootOrigin, pathRootNew);
       const formField = new FormField(_descriptorCompiled, form);
       if (['object', 'array'].includes(type) && fields) {
@@ -90,7 +95,7 @@ export default class FormField {
 
   createChild() {
     const { descriptorCompiled } = this;
-    const { fields } = descriptorCompiled;
+    const { fields = {} } = descriptorCompiled;
     let descriptorCompiledChild = fields[Object.keys(fields).length - 1];
     if (!descriptorCompiledChild) {
       console.log(descriptorCompiled);
@@ -120,15 +125,47 @@ export default class FormField {
     this.node.addChild(field?.node);
   }
 
-  moveChild(field: FormField, gap: number): boolean {
-    const moveSuccess = this.utils.moveArrayItem(this.children, field, gap);
+  moveChild(field: FormField, gap: number) {
+    const range = this.utils.moveArrayItem(this.children, field, gap);
+    if (range) {
+      const [indexStart, indexEnd] = range;
+      this.syncChildrenInfo(indexStart, indexEnd);
+    }
     this.node.moveChild(field?.node, gap);
-    return moveSuccess;
   }
 
   removeChild(field: FormField) {
-    this.utils.removeArrayItem(this.children, field);
+    const range = this.utils.removeArrayItem(this.children, field);
+    field.parent = null;
+    if (range) {
+      const [indexStart, indexEnd] = range;
+      this.syncChildrenInfo(indexStart, indexEnd);
+    }
     this.node.removeChild(field?.node);
+  }
+
+  syncChildrenInfo(indexStart: number, indexEnd: number) {
+    const { type, children } = this;
+    if (type !== 'array') {
+      return;
+    }
+    const updatePath = (f: FormField, p: string, base: string) => {
+      f.path = f.path.replace(base, p);
+      f.children.forEach(_f => updatePath(_f, p, base));
+    }
+    for (let i = indexStart; i <= indexEnd; i++) {
+      const child = children[i];
+      const { name, node, path } = child;
+      const nameTarget = String(i);
+      if (name === nameTarget) {
+        continue;
+      } else {
+        child.name = nameTarget;
+        const pathTarget = path.replace(/([^.]+)$/, '') + nameTarget;
+        updatePath(child, pathTarget, path);
+        node.setName(nameTarget);
+      }
+    }
   }
 
   async validate(): Promise<FormFieldError[] | null> {
@@ -142,7 +179,7 @@ export default class FormField {
       // console.log('validate', valueNew, descriptor);
       const pathBase = path.replace(/([^.]+)$/, '');
       error = error.map((e: FormFieldError) => {
-        const { field, message } = e;
+        const { field = '', message = '' } = e;
         const names = field.split('.');
         const name = names[names.length - 1];
         return {
@@ -181,11 +218,11 @@ export default class FormField {
     if (error?.length) {
       this.error = error;
       const message = error.map(e => e.message).join(';\n');
-      node.displayError(message);
+      node.setError(message);
       form.errorFields.set(id, this);
     } else {
       this.error = null;
-      node.hideError();
+      node.setError();
       form.errorFields.delete(id);
     }
   }
@@ -282,7 +319,7 @@ export default class FormField {
     }
 
     if (fieldChanged.node?.isViewLazy) {
-      fieldChanged.node?.setView(value);
+      fieldChanged.node?.setValue(value);
     }
 
     const {
@@ -334,7 +371,7 @@ export default class FormField {
         }
       }
     } else {
-      this.node?.setView(valueNew);
+      this.node?.setValue(valueNew);
     }
   }
 

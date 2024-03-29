@@ -1,0 +1,20 @@
+{
+  "name": "form-cross-view-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf -rf dist && rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.17.0",
+    "async-validator": "^4.2.5",
+    "lodash": "^4.17.21",
+    "rollup": "^4.13.2",
+    "rollup-plugin-typescript2": "^0.36.0"
+  }
+}
