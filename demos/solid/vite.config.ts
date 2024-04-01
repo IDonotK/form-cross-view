@@ -1,21 +1,36 @@
-import { defineConfig } from 'vite'
-import solid from 'vite-plugin-solid'
+import { defineConfig, Alias, ConfigEnv } from 'vite';
+import solid from 'vite-plugin-solid';
 import * as path from 'path';
 
-const isDev = true;
+export default defineConfig((env: ConfigEnv) => {
+  const { mode } = env;
 
-const alias = [];
+  console.log('mode', mode);
 
-if (isDev) {
-  alias.push({
-    find: 'form-cross-view-core',
-    replacement: path.resolve(__dirname, '../../packages/form-cross-view-core/index'),
-  });
-}
+  const alias: Alias[] = [];
+  if (mode === 'dev') {
+    const pkgsHmr = [
+      'form-cross-view-core',
+      'form-cross-view-solid',
+    ];
+    pkgsHmr.forEach((p: string) => {
+      alias.push(
+        {
+          find: `${p}/dist/style.css`,
+          replacement: path.resolve(__dirname, `../../packages/${p}/index.module.scss`),
+        },
+        {
+          find: p,
+          replacement: path.resolve(__dirname, `../../packages/${p}/index`),
+        },
+      );
+    });
+  }
 
-export default defineConfig({
-  plugins: [solid()],
-  resolve: {
-    alias
+  return {
+    plugins: [solid()],
+    resolve: {
+      alias
+    }
   }
 })

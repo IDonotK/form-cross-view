@@ -7,7 +7,8 @@
     "build": "pnpm --filter ./packages/** run build",
     "build:core": "pnpm --filter=form-cross-view-core run build",
     "build:solid": "pnpm --filter=form-cross-view-solid run build",
-    "demo:solid": "vite serve demos/solid --force"
+    "demo:dev:solid": "vite serve demos/solid --force --mode dev",
+    "demo:prd:solid": "vite serve demos/solid --force --mode prd"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,10 @@
     "rimraf": "^5.0.5",
     "vite": "^5.2.0",
     "vite-plugin-solid": "^2.10.2",
-    "solid-js": "^1.8.16"
+    "sass": "^1.72.0",
+    "rollup": "^4.13.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.2.2"
   }
 }

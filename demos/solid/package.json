@@ -15,11 +15,5 @@
     "solid-js": "^1.8.15",
     "form-cross-view-core": "workspace:*",
     "form-cross-view-solid": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.30",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "vite-plugin-solid": "^2.10.2"
   }
 }
