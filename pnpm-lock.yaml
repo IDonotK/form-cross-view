@@ -33,6 +33,12 @@ importers:
         specifier: ^2.10.2
         version: 2.10.2(solid-js@1.8.16)(vite@5.2.6)
 
+  demos/native:
+    dependencies:
+      form-cross-view-core:
+        specifier: workspace:*
+        version: link:../../packages/form-cross-view-core
+
   demos/solid:
     dependencies:
       form-cross-view-core:
@@ -42,7 +48,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/form-cross-view-solid
       solid-js:
-        specifier: ^1.8.15
+        specifier: ^1.8.16
         version: 1.8.16
 
   packages/form-cross-view-core:
@@ -57,8 +63,17 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
 
+  packages/form-cross-view-native:
+    devDependencies:
+      form-cross-view-core:
+        specifier: workspace:*
+        version: link:../form-cross-view-core
+
   packages/form-cross-view-solid:
     devDependencies:
+      form-cross-view-core:
+        specifier: workspace:*
+        version: link:../form-cross-view-core
       solid-js:
         specifier: ^1.8.16
         version: 1.8.16

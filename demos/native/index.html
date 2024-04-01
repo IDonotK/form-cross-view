@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NativeView</title>
+</head>
+<body>
+  <div class='formContainer'>
+    <div id='form'></div>
+  </div>
+  <script type="module">
+    import { Form } from 'form-cross-view-core';
+
+    const updateForm = async (descriptor, value) => {
+      const formDiv = document.getElementById('form');
+      if (!formDiv) {
+        throw Error('missing formDiv');
+      }
+      formDiv.innerHTML = '';
+
+      const formInstance = new Form(
+        formDiv,
+        descriptor,
+        // {
+        //   createView: genCreateViewSolid(),
+        //   mountView: genMountViewSolid(setFormRender),
+        // }
+      );
+
+      console.log(formInstance);
+    }
+
+    updateForm({});
+  </script>
+</body>
+</html>

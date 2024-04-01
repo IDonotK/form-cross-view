@@ -7,8 +7,9 @@
     "build": "pnpm --filter ./packages/** run build",
     "build:core": "pnpm --filter=form-cross-view-core run build",
     "build:solid": "pnpm --filter=form-cross-view-solid run build",
-    "demo:dev:solid": "vite serve demos/solid --force --mode dev",
-    "demo:prd:solid": "vite serve demos/solid --force --mode prd"
+    "demo:dev:native": "pnpm --filter=native run dev",
+    "demo:dev:solid": "pnpm --filter=solid run dev",
+    "demo:prd:solid": "pnpm --filter=solid run prd"
   },
   "repository": {
     "type": "git",

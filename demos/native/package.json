@@ -1,5 +1,5 @@
 {
-  "name": "solid",
+  "name": "native",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -11,8 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "form-cross-view-core": "workspace:*",
-    "form-cross-view-solid": "workspace:*",
-    "solid-js": "^1.8.16"
+    "form-cross-view-core": "workspace:*"
   }
 }

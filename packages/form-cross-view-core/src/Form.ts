@@ -1,9 +1,9 @@
-import FormField from './FormField';
-import FormNode from './FormNode';
+import { FormField } from './FormField';
+import { FormNode } from './FormNode';
 import * as utils from './utils';
 import Events from './Events';
-import * as validator from './validator';
 import {
+  compileDescriptor,
   Descriptor,
   DescriptorCompiled,
 } from './validator';
@@ -62,7 +62,7 @@ export class Form {
   }
 
   private _create(descriptor: Descriptor) {
-    const descriptorCompiled = validator.compileDescriptor(
+    const descriptorCompiled = compileDescriptor(
       descriptor,
       'settings'
     );

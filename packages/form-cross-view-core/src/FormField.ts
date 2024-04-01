@@ -1,15 +1,15 @@
 import { cloneDeep } from 'lodash';
 
 import { Form } from './Form';
-import FormNode from './FormNode';
-import * as validator from './validator';
+import { FormNode } from './FormNode';
 import {
+  validateField,
   DescriptorCompiled,
   FieldValidateError as FormFieldError,
 } from './validator';
 
 
-export default class FormField {
+export class FormField {
   id: string;
 
   type: string;
@@ -172,7 +172,7 @@ export default class FormField {
     const { name, descriptor, path } = this;
 
     const valueNew = this.getValue();
-    const errorOrigin = await validator.validateField(name, valueNew, descriptor);
+    const errorOrigin = await validateField(name, valueNew, descriptor);
     let error = errorOrigin?.data || null;
 
     if (error) {

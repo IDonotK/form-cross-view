@@ -1,8 +1,8 @@
 {
-  "name": "form-cross-view-solid",
+  "name": "form-cross-view-native",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.mjs",
+  "main": "index.js",
   "scripts": {
     "build": "rimraf -rf dist && vite build"
   },
@@ -10,11 +10,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "solid-js": "^1.8.16",
     "form-cross-view-core": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": "^1.8.16",
     "form-cross-view-core": "workspace:*"
   }
 }

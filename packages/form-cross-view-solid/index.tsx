@@ -1,13 +1,7 @@
 import { createSignal, For } from 'solid-js';
+import { Form, FormNode } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
-
-// import { Form } from '../form-cross-view/src/Form';
-// import FormNode from '../form-cross-view/src/FormNode';
-
-type Form = any
-
-type FormNode = any
 
 export type Styles = { [k: string]: any }
 

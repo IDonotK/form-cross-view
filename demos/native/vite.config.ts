@@ -1,5 +1,4 @@
 import { defineConfig, Alias, ConfigEnv } from 'vite';
-import solid from 'vite-plugin-solid';
 import * as path from 'path';
 
 export default defineConfig((env: ConfigEnv) => {
@@ -9,7 +8,7 @@ export default defineConfig((env: ConfigEnv) => {
   if (mode === 'dev') {
     const pkgsHmr = [
       'form-cross-view-core',
-      'form-cross-view-solid',
+      'form-cross-view-native',
     ];
     pkgsHmr.forEach((p: string) => {
       alias.push(
@@ -26,7 +25,6 @@ export default defineConfig((env: ConfigEnv) => {
   }
 
   return {
-    plugins: [solid()],
     resolve: {
       alias
     }

@@ -1,4 +1,4 @@
-import FormField from './FormField';
+import { FormField } from './FormField';
 
 export type ViewCtx = {
   syncChildren?: () => void;
@@ -9,7 +9,7 @@ export type ViewCtx = {
   [k: string]: any;
 }
 
-export default class FormNode {
+export class FormNode {
   controller: FormField;
 
   private _isValueVisible: boolean = true;
