@@ -35,9 +35,9 @@ export class FormNode {
     }
   }
 
-  addChild(node: FormNode) {
+  addChild(node: FormNode, syncView: boolean = false) {
     this.controller.utils.addArrayItem(this.children, node);
-    if (typeof this.viewCtx?.syncChildren === 'function') {
+    if (syncView && typeof this.viewCtx?.syncChildren === 'function') {
       this.viewCtx?.syncChildren();
     }
   }

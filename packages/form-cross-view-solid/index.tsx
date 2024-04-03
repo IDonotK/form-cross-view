@@ -284,7 +284,7 @@ export function genCreateViewSolid(styles?: Styles) {
 
     node.viewCtx.view = NodeView;
 
-    const [children, setChildren] = createSignal([] as ViewCtx[]);
+    const [children, setChildren] = createSignal([] as FormNode[]);
     node.viewCtx.children = children;
     node.viewCtx.syncChildren = () => {
       const { children } = node;

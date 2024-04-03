@@ -119,10 +119,10 @@ export class FormField {
     return formFieldChild;
   }
 
-  addChild(field: FormField) {
+  addChild(field: FormField, syncView: boolean = false) {
     this.utils.addArrayItem(this.children, field);
     field.parent = this;
-    this.node.addChild(field?.node);
+    this.node.addChild(field?.node, syncView);
   }
 
   moveChild(field: FormField, gap: number) {
@@ -276,7 +276,7 @@ export class FormField {
           case 'addItem': {
             fieldChanged = this;
             const formFieldChild = fieldChanged.createChild();
-            fieldChanged.addChild(formFieldChild);
+            fieldChanged.addChild(formFieldChild, true);
             valueNew = fieldChanged.getValue();
             break;
           }
@@ -302,7 +302,7 @@ export class FormField {
             fieldChanged = this.parent;
             if (fieldChanged) {
               const formFieldChild = fieldChanged.copyChild(this);
-              fieldChanged.addChild(formFieldChild);
+              fieldChanged.addChild(formFieldChild, true);
             }
             valueNew = fieldChanged?.getValue();
             break;
@@ -358,7 +358,7 @@ export class FormField {
           const formFieldChild = this.createChild();
           formFieldChild.setValue(valueNew[i]);
           formFieldChild._orderInit = i;
-          this.addChild(formFieldChild);
+          this.addChild(formFieldChild, true);
         }
       }
       if (i < lenCur) {
