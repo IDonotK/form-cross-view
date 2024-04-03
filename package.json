@@ -8,11 +8,12 @@
     "build:core": "pnpm --filter=form-cross-view-core run build",
     "build:solid": "pnpm --filter=form-cross-view-solid run build",
     "build:react": "pnpm --filter=form-cross-view-react run build",
+    "build:vue": "pnpm --filter=form-cross-view-vue run build",
     "demo:dev:native": "pnpm --filter=native run dev",
     "demo:dev:solid": "pnpm --filter=solid run dev",
     "demo:dev:react": "pnpm --filter=react run dev",
-    "demo:prd:native": "pnpm --filter=native run prd",
-    "demo:prd:solid": "pnpm --filter=solid run prd"
+    "demo:dev:vue": "pnpm --filter=vue run dev",
+    "demo:prd:native": "pnpm --filter=native run prd"
   },
   "repository": {
     "type": "git",
@@ -29,10 +30,12 @@
     "vite": "^5.2.0",
     "vite-plugin-solid": "^2.10.2",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-vue": "^5.0.4",
     "sass": "^1.72.0",
     "rollup": "^4.13.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "@types/node": "^20.11.30",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vue-tsc": "^2.0.6"
   }
 }

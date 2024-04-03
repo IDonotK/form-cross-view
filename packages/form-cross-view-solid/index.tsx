@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { Form, FormNode, ViewCtx } from 'form-cross-view-core';
+import { Form, FormNode } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 

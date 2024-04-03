@@ -1,0 +1,66 @@
+.formField {
+  margin: 5px;
+  padding: 3px;
+  border: 1px dashed #fff;
+
+  .comment {
+    color: #40BF40;
+    white-space: pre-wrap;
+  }
+  
+  .fieldName {
+    margin-top: 2px;
+    color: #fff;
+    font-weight: 500;
+
+    .valueVisibleCtrl {
+      display: inline-block;
+      margin-right: 3px;
+      cursor: pointer;
+      transform: rotate(90deg);
+
+      &.fold {
+        transform: rotate(0);
+      }
+    }
+
+    .operations {
+      float: right;
+
+      .item {
+        color: #fff;
+        margin-right: 5px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .fieldValue {
+    margin-top: 2px;
+    overflow-y: hidden;
+    height: auto;
+
+    &.fold {
+      height: 0;
+    }
+
+    .operations {
+      display: flex;
+      justify-content: center;
+
+      button {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .error {
+    margin-top: 2px;
+    color: #52E052;
+    white-space: pre-wrap;
+
+    &.hidden {
+      display: none;
+    }
+  }
+}

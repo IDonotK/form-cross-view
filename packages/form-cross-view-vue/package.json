@@ -1,0 +1,20 @@
+{
+  "name": "form-cross-view-vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.mjs",
+  "scripts": {
+    "build": "rimraf -rf dist && vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "form-cross-view-core": "workspace:*",
+    "vue": "^3.4.21"
+  },
+  "peerDependencies": {
+    "form-cross-view-core": "workspace:*",
+    "vue": "^3.4.21"
+  }
+}
