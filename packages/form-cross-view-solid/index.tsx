@@ -256,6 +256,8 @@ export function genCreateViewSolid(styles?: Styles) {
     }
 
     const NodeView = (props: any) => {
+      const { node } = props;
+
       const formatName = (name: string) => {
         if (controller.isArrayItem) {
           return `item-${name}`;
@@ -272,56 +274,47 @@ export function genCreateViewSolid(styles?: Styles) {
       const [message, setMessage] = createSignal(messageOrigin);
       node.viewCtx.setError = (message?: string) => setMessage(message || '');
 
+      const [children, setChildren] = createSignal(node.children);
+      node.viewCtx.syncChildren = () => {
+        console.log('syncChildren');
+        const { children } = node;
+        setChildren([...children]);
+      };
+
       return (
         <Container>
           <Comment />
           <Label valueVisible={valueVisible} name={name} />
-          <Value valueVisible={valueVisible} >{props.children}</Value>
+          <Value valueVisible={valueVisible} >
+            <For each={children()}>
+              {
+                (n: FormNode) => {
+                  const {
+                    viewCtx: { view: NodeView }
+                  } = n;
+                  return <NodeView node={n} />
+                }
+              }
+            </For>
+          </Value>
           <ErrorView message={message}/>
         </Container>
       )
     }
 
     node.viewCtx.view = NodeView;
-
-    const [children, setChildren] = createSignal([] as FormNode[]);
-    node.viewCtx.children = children;
-    node.viewCtx.syncChildren = () => {
-      const { children } = node;
-      setChildren([...children]);
-    };
   }
 }
 
 export function genMountViewSolid(setFormRender?: Function) {
   return function mountViewSolid(form: Form) {
-    const FieldRender = (props: any) => {
-      // eslint-disable-next-line solid/reactivity
-      const { node } = props;
-      if (!node) {
-        return null;
-      }
-      const { viewCtx: { view: NodeView, children } } = node;
-      return (
-        <NodeView>
-          <For each={children()}>
-            {
-              (n, i) => (
-                <FieldRender node={n} />
-              )
-            }
-          </For>
-        </NodeView>
-      )
+    const rootNode = form?.rootFormFiled?.node;
+    if (!rootNode) {
+      return;
     }
 
-    const FormRender = () => {
-      const rootNode = form?.rootFormFiled?.node;
-      return (
-        <FieldRender node={rootNode} />
-      )
-    }
+    const { viewCtx: { view: NodeView } } = rootNode;
 
-    setFormRender && setFormRender(FormRender);
+    setFormRender && setFormRender(() => (<NodeView node={rootNode} />));
   }
 }
