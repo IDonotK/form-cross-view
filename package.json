@@ -9,6 +9,7 @@
     "build:solid": "pnpm --filter=form-cross-view-solid run build",
     "demo:dev:native": "pnpm --filter=native run dev",
     "demo:dev:solid": "pnpm --filter=solid run dev",
+    "demo:prd:native": "pnpm --filter=native run prd",
     "demo:prd:solid": "pnpm --filter=solid run prd"
   },
   "repository": {

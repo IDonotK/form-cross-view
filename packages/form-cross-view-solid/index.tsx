@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { Form, FormNode } from 'form-cross-view-core';
+import { Form, FormNode, ViewCtx } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 
@@ -10,7 +10,7 @@ export function genCreateViewSolid(styles?: Styles) {
     styles = stylesDefault;
   }
 
-  const getClass = (styles: Styles, name: string) => {
+  const getClass = (styles: Styles | undefined, name: string) => {
     return styles?.[name] || name;
   }
 
@@ -94,19 +94,6 @@ export function genCreateViewSolid(styles?: Styles) {
                 {'>'}
               </span>
               <span>{props.name()}</span>
-              <FieldOperations />
-            </div>
-          )
-        }
-        case 'method': {
-          return (
-            <div class={getClass(styles, 'fieldName')}>
-              <span>{props.name()}</span>
-              <button
-                onClick={() => controller?.form?.blockly?.open(controller) }
-              >
-                {'open blockly'}
-              </button>
               <FieldOperations />
             </div>
           )
@@ -218,32 +205,6 @@ export function genCreateViewSolid(styles?: Styles) {
             </div>
           )
         }
-        case 'method': {
-          const formatValue = (value: Function) => {
-            let valueFormated = '';
-            try {
-              const func = controller!.form!.blockly!.cullCodeBlockly(value);
-              valueFormated = func.toString();
-            } catch (e) {
-              console.log(e);
-            }
-            return valueFormated;
-          }
-          const [valueDisplay, setValueDisplay] = createSignal({ value: formatValue(value) });
-          node.viewCtx.setValue = (value: Function) => setValueDisplay({
-            value: formatValue(value)
-          });
-          return (
-            <div
-              classList={{
-                [getClass(styles, 'fieldValue')]: true,
-                [getClass(styles, 'simpleValue')]: true,
-              }}
-            >
-              {valueDisplay()?.value}
-            </div>
-          )
-        }
         case 'enum': {
           const [valueDisplay, setValueDisplay] = createSignal({ value });
           node.viewCtx.setValue = (value: string) => setValueDisplay({ value });
@@ -285,8 +246,8 @@ export function genCreateViewSolid(styles?: Styles) {
       return (
         <div
           classList={{
-            [styles.error || 'error']: true,
-            [styles.hidden || 'hidden']: !props.message(),
+            [getClass(styles, 'error')]: true,
+            [getClass(styles, 'hidden')]: !props.message(),
           }}
         >
           {props.message()}

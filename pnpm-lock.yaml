@@ -38,6 +38,9 @@ importers:
       form-cross-view-core:
         specifier: workspace:*
         version: link:../../packages/form-cross-view-core
+      form-cross-view-native:
+        specifier: workspace:*
+        version: link:../../packages/form-cross-view-native
 
   demos/solid:
     dependencies:

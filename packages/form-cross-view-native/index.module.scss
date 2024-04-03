@@ -40,11 +40,6 @@
     overflow-y: hidden;
     height: auto;
 
-    &.simpleValue {
-      background: #fff;
-      color: #000;
-    }
-
     &.fold {
       height: 0;
     }

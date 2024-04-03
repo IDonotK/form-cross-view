@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NativeView</title>
+  <style>
+    .formContainer {
+      width: 600px;
+      height: 650px;
+      border-radius: 12px;
+      background: #000;
+      user-select: none;
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
   <div class='formContainer'>
@@ -11,6 +21,8 @@
   </div>
   <script type="module">
     import { Form } from 'form-cross-view-core';
+    import { genCreateViewNative, genMountViewNative } from 'form-cross-view-native';
+    import 'form-cross-view-native/dist/style.css';
 
     const updateForm = async (descriptor, value) => {
       const formDiv = document.getElementById('form');
@@ -22,16 +34,90 @@
       const formInstance = new Form(
         formDiv,
         descriptor,
-        // {
-        //   createView: genCreateViewSolid(),
-        //   mountView: genMountViewSolid(setFormRender),
-        // }
+        {
+          createView: genCreateViewNative(),
+          mountView: genMountViewNative(),
+        }
       );
 
       console.log(formInstance);
     }
 
-    updateForm({});
+    const descriptor = {
+      type: 'object',
+      required: true,
+      editable: true,
+      comment: `
+  1.小车装有超声波传感器，可检测到前方的石头；
+  2.请补充小车的控制逻辑，将石头移出圆形区域。
+      `,
+      fields: {
+        a: {
+          type: 'string',
+          required: true,
+          defaultValue: 'hello',
+          comment: 'a 的注释',
+          editable: true,
+        },
+        b: {
+          type: 'number',
+          required: true,
+          min: 1,
+          max: 18,
+          defaultValue: 1,
+          editable: true,
+        },
+        c: {
+          type: 'integer',
+          required: true,
+          min: -1,
+          max: 16,
+          defaultValue: 2,
+          editable: true,
+        },
+        d: {
+          type: 'float',
+          required: true,
+          defaultValue: 3.1,
+          editable: true,
+        },
+        e: {
+          type: 'boolean',
+          required: true,
+          defaultValue: false,
+          editable: true,
+        },
+        f: {
+          type: 'enum',
+          required: true,
+          enum: ['admin', 'user', 'guest'],
+          defaultValue: 'admin',
+          editable: true,
+        },
+        vertices: {
+          type: 'array',
+          editable: true,
+          comment: `
+  数组多行注释
+  数组多行注释
+          `,
+          defaultField: {
+            type: 'array',
+            len: 2,
+            editable: true,
+            defaultField: {
+              type: 'number',
+              required: true,
+              editable: true,
+              defaultValue: 0,
+            }
+          },
+          defaultValue: [[-0.5, -0.5]],
+        },
+      },
+    }
+
+    updateForm(descriptor);
   </script>
 </body>
 </html>

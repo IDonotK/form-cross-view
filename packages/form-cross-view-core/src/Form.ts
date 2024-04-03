@@ -8,6 +8,8 @@ import {
   DescriptorCompiled,
 } from './validator';
 
+export type Utils = typeof utils
+
 export class Form {
   container: HTMLElement;
 
@@ -17,7 +19,7 @@ export class Form {
 
   events: Events | null = null;
 
-  utils: { [k: string]: Function } = {};
+  utils: Utils;
 
   rootFormFiled: FormField | null = null;
 

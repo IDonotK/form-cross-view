@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 
-import { Form } from './Form';
+import { Form, Utils } from './Form';
 import { FormNode } from './FormNode';
 import {
   validateField,
@@ -44,7 +44,7 @@ export class FormField {
 
   children: FormField[] = [];
 
-  utils: { [k: string]: Function } = {};
+  utils: Utils;
 
   constructor(descriptorCompiled: DescriptorCompiled, form: Form) {
     this.form = form;
@@ -316,10 +316,6 @@ export class FormField {
 
     if (!fieldChanged) {
       return;
-    }
-
-    if (fieldChanged.node?.isViewLazy) {
-      fieldChanged.node?.setValue(value);
     }
 
     const {

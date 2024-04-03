@@ -14,16 +14,12 @@ export class FormNode {
 
   private _isValueVisible: boolean = true;
 
-  isViewLazy: boolean;
-
   viewCtx: ViewCtx = {};
 
   children: FormNode[] = [];
 
   constructor(controller: FormField) {
     this.controller = controller;
-
-    this.isViewLazy = ['method'].includes(controller.type);
 
     this.controller.form.createView(this);
   }

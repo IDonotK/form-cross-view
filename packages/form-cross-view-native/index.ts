@@ -1,365 +1,385 @@
 import { Form, FormNode } from 'form-cross-view-core';
 
-export function createViewNative(node: FormNode) {
-  const {
-    __fieldName__: fieldName, __type__: type, __comment__: comment,
-  } = node;
+import stylesDefault from './index.module.scss';
 
-  const refs: { [k: string]: HTMLElement } = {};
+export type Styles = { [k: string]: any }
 
-  refs.containerRef = createContainer();
-  refs.commentRef = createCommentDom(comment);
-  refs.labelRef = createLabelDom(type, fieldName);
-  refs.valueRef = createValueDom(descriptorCompiled);
-  refs.errorRef = createErrorDom();
-
-  node.viewCtx.addChild = (_node: FormNode) => {
-    const { valueRef } = node.viewCtx.refs;
-    const { containerRef } = _node.viewCtx.refs;
-    valueRef.appendChild(containerRef);
-  }
-  node.viewCtx.setValue = genSetValue(type);
-  node.viewCtx.displayValue = () => {
-    const { valueVisibleCtrlRef, valueRef } = node.viewCtx.refs;
-    valueVisibleCtrlRef?.classList.remove(styles.unfold || 'fold');
-    valueRef?.classList.remove(styles.fold || 'fold');
-  }
-  node.viewCtx.hideValue = () => {
-    const { valueVisibleCtrlRef, valueRef } = node.viewCtx.refs;
-    valueVisibleCtrlRef?.classList.add(styles.fold || 'fold');
-    valueRef?.classList.add(styles.fold || 'fold');
-  }
-  node.viewCtx.displayError = (message: string) => {
-    const { errorRef } = node.viewCtx.refs;
-    errorRef.innerText = `${message}`;
-    errorRef.classList.remove(styles.hidden || 'hidden');
-  }
-  node.viewCtx.hideError = () => {
-    const { errorRef } = node.viewCtx.refs;
-    errorRef.innerText = '';
-    errorRef.classList.add(styles.hidden || 'hidden');
+export function genCreateViewNative(styles?: Styles) {
+  if (!styles) {
+    styles = stylesDefault;
   }
 
-  refs.containerRef.appendChild(refs.commentRef);
-  refs.containerRef.appendChild(refs.labelRef);
-  refs.containerRef.appendChild(refs.valueRef);
-  refs.containerRef.appendChild(refs.errorRef);
-
-  node.viewCtx.refs = refs;
-
-  function createContainer(): HTMLElement {
-    const dom = document.createElement('div');
-    dom.className = styles.formField || 'formField';
-    return dom;
+  const getClass = (styles: Styles | undefined, name: string) => {
+    return styles?.[name] || name;
   }
 
-  function createCommentDom(comment: string): HTMLElement {
-    const dom = document.createElement('div');
-    dom.className = styles.comment || 'comment';
-    dom.innerText = `${comment}`;
-    return dom;
-  }
-
-  function createLabelDom(type: string, fieldName: string): HTMLElement {
-    fieldName = fieldName === 'root' ? 'settings' : fieldName;
-    if (node.isArrayItem) {
-      fieldName = `item${fieldName}`;
+  return function createViewNative(node: FormNode) {
+    const { controller } = node;
+    if (!controller) {
+      throw Error('missing controller');
     }
 
-    let dom: HTMLElement;
-    switch(type) {
-      case 'array':
-      case 'object': {
-        dom = document.createElement('div');
+    const {
+      name: fieldName, type, comment,
+    } = controller;
+  
+    const refs: { [k: string]: HTMLElement } = {};
+  
+    refs.containerRef = createContainer();
 
-        const valueVisibleCtrlDom = createValueVisibleCtrlDom();
+    refs.commentRef = createCommentDom();
+    refs.containerRef.appendChild(refs.commentRef);
 
-        const name = document.createElement('span');
-        name.innerText = `${fieldName}`;
+    refs.labelRef = createLabelDom();
+    refs.containerRef.appendChild(refs.labelRef);
 
-        refs.valueVisibleCtrlRef = valueVisibleCtrlDom;
+    const valueDom = createValueDom();
+    refs.valueRef = valueDom.innerValueRef || valueDom;
+    refs.containerRef.appendChild(valueDom);
 
-        dom.appendChild(valueVisibleCtrlDom);
-        dom.appendChild(name);
-        break;
-      }
-      case 'method': {
-        dom = document.createElement('div');
+    refs.errorRef = createErrorDom();
+    refs.containerRef.appendChild(refs.errorRef);
+  
+    node.viewCtx.refs = refs;
 
-        const name = document.createElement('span');
-        name.innerText = `${fieldName}`;
-
-        const blocklyVisibleCtrlDom = document.createElement('button');
-        blocklyVisibleCtrlDom.innerText = 'open blockly';
-        blocklyVisibleCtrlDom.onclick = () => {
-          node.controller?.form?.blockly?.open(node.controller);
-        }
-
-        dom.appendChild(name);
-        dom.appendChild(blocklyVisibleCtrlDom);
-        break;
-      }
-      default: {
-        dom = document.createElement('div');
-        dom.innerText = `${fieldName}`;
-      }
+    node.viewCtx.syncChildren = () => {
+      const { children } = node;
+      const { valueRef } = node.viewCtx.refs;
+      valueRef.innerHTML = '';
+      children.forEach((childNode: FormNode) => {
+        valueRef.appendChild(childNode.viewCtx.refs.containerRef);
+      });
+    };
+  
+    function createContainer(): HTMLElement {
+      const dom = document.createElement('div');
+      dom.className = getClass(styles, 'formField');
+      return dom;
     }
-    dom.classList.add(styles.fieldName || 'fieldName');
-    return dom;
-  }
-
-  function createValueVisibleCtrlDom(): HTMLElement {
-    const dom = document.createElement('span');
-    dom.innerText = '>';
-    dom.classList.add(styles.valueVisibleCtrl || 'valueVisibleCtrl');
-    dom.onclick = () => {
-      node.valueVisible = !node.valueVisible;
+  
+    function createCommentDom(): HTMLElement {
+      const dom = document.createElement('div');
+      dom.className = getClass(styles, 'comment');
+      dom.innerText = `${comment}`;
+      return dom;
     }
-    return dom;
-  }
-
-  function createValueDom(descriptorCompiled: DescriptorCompiled): HTMLElement {
-    const { __type__: type, __descriptor__: descriptor, __value__: value } = descriptorCompiled;
-
-    let dom: HTMLElement;
-    switch(type) {
-      case 'array':
-      case 'object': {
-        dom = document.createElement('div');
-        break;
-      }
-      case 'string': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(String(e.target?.value));
+  
+    function createLabelDom(): HTMLElement {
+      const formatName = (name: string) => {
+        if (controller.isArrayItem) {
+          return `item-${name}`;
         }
-        break;
+        return name;
       }
-      case 'number': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(Number(e.target?.value));
-        }
-        break;
-      }
-      case 'integer': {
-        const { min = -Infinity, max = Infinity } = descriptor;
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'number';
-        (dom as HTMLInputElement).min = min;
-        (dom as HTMLInputElement).max = max;
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(Number(e.target?.value));
-        }
-        break;
-      }
-      case 'float': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(Number(e.target?.value));
-        }
-        break;
-      }
-      case 'boolean': {
-        dom = document.createElement('div');
-        const name = genId();
-
-        const trueRadio = document.createElement('input');
-        (trueRadio as HTMLInputElement).type = 'radio';
-        (trueRadio as HTMLInputElement).name = name;
-        (trueRadio as HTMLInputElement).value = 'true';
-        trueRadio.onclick = async (e) => {
-          if (e.target?.checked) {
-            await node.onViewChange(true);
+      const label = formatName(fieldName);
+  
+      let dom: HTMLElement;
+      switch(type) {
+        case 'array':
+        case 'object': {
+          dom = document.createElement('div');
+  
+          const valueVisibleCtrlDom = createValueVisibleCtrlDom();
+  
+          const nameDom = document.createElement('span');
+          nameDom.innerText = `${label}`;
+          node.viewCtx.setName = (name: string) => {
+            nameDom.innerText = `${formatName(name)}`;
           }
+  
+          refs.valueVisibleCtrlRef = valueVisibleCtrlDom;
+  
+          dom.appendChild(valueVisibleCtrlDom);
+          dom.appendChild(nameDom);
+          break;
         }
-        const trueLabel = document.createElement('span');
-        trueLabel.innerText = 'true';
-        trueLabel.style.color = '#fff';
-        trueLabel.style.marginRight = '10px';
-
-        const falseRadio = document.createElement('input');
-        (falseRadio as HTMLInputElement).type = 'radio';
-        (falseRadio as HTMLInputElement).name = name;
-        (falseRadio as HTMLInputElement).value = 'false';
-        falseRadio.onclick = async (e) => {
-          if (e.target?.checked) {
-            await node.onViewChange(false);
+        default: {
+          dom = document.createElement('div');
+          const nameDom = document.createElement('span');
+          nameDom.innerText = `${label}`;
+          node.viewCtx.setName = (name: string) => {
+            nameDom.innerText = `${formatName(name)}`;
           }
+          dom.appendChild(nameDom);
         }
-        const falseLabel = document.createElement('span');
-        falseLabel.innerText = 'false';
-        falseLabel.style.color = '#fff';
-
-        if (node.controller?.getValue() === true) {
-          trueRadio.checked = true;
-        } else {
-          falseRadio.checked = true;
-        }
-
-        dom.appendChild(trueRadio);
-        dom.appendChild(trueLabel);
-        dom.appendChild(falseRadio);
-        dom.appendChild(falseLabel);
-
-        break;
       }
-      case 'method': {
-        dom = document.createElement('div');
-        dom.classList.add(styles.simpleValue || 'simpleValue');
-        const valueClean = node.controller!.form!.blockly!.cullCodeBlockly(value);
-        dom.innerText = valueClean?.toString() || '';
-        break;
-      }
-      case 'enum': {
-        dom = document.createElement('div');
-        const name = genId();
 
-        const values = (node.controller?.descriptor?.enum || []).map((v: any) => String(v));
-        const value = String(node.controller?.getValue());
-
-        values.forEach((v: string) => {
-          const radio = document.createElement('input');
-          (radio as HTMLInputElement).type = 'radio';
-          (radio as HTMLInputElement).name = name;
-          (radio as HTMLInputElement).value = v;
-          radio.onclick = async (e) => {
-            if (e.target?.checked) {
-              await node.onViewChange(v);
-            }
-          }
-          radio.checked = v === value;
-
-          const label = document.createElement('span');
-          label.innerText = v;
-          label.style.color = '#fff';
-          label.style.marginRight = '10px';
-
-          dom.appendChild(radio);
-          dom.appendChild(label);
-        });
-
-        break;
-      }
-      case 'regexp': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(String(e.target?.value));
-        }
-        break;
-      }
-      case 'date': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'date';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(e.target?.value);
-        }
-        break;
-      }
-      case 'url': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(String(e.target?.value));
-        }
-        break;
-      }
-      case 'hex': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(String(e.target?.value));
-        }
-        break;
-      }
-      case 'email': {
-        dom = document.createElement('input');
-        (dom as HTMLInputElement).type = 'text';
-        (dom as HTMLInputElement).value = value;
-        dom.oninput = async (e) => {
-          await node.onViewChange(String(e.target?.value));
-        }
-        break;
-      }
-      default: {
-        dom = document.createElement('div');
-        dom.innerText = `${value}`;
-      }
-    }
-    dom.classList.add(styles.fieldValue || 'fieldValue');
-
-    return dom;
-  }
-
-  function genSetValue(type: string) {
-    let setValue = (value: any) => {};
-
-    switch (type) {
-      case 'object': break;
-      case 'array': break;
-      case 'method': {
-        setValue = (value: any) => {
-          const { valueRef } = node.viewCtx.refs;
-          const valueClean = node.controller!.form!.blockly!.cullCodeBlockly(value);
-          valueRef!.innerText = valueClean?.toString() || '';
-        }
-        break;
-      }
-      case 'boolean':
-      case 'enum': {
-        setValue = (value: any) => {
-          const { valueRef } = node.viewCtx.refs;
-          Array.from(valueRef?.children || []).forEach(c => {
-            c.checked = c.value === String(value);
+      if (controller.isArrayItem) {
+        const onMoveUp = async () => {
+          await node.onViewChange({
+            source: 'operation',
+            value: 'moveUp',
           });
         }
-        break;
-      }
-      case 'string':
-      case 'number':
-      case 'integer':
-      case 'float':
-      case 'regexp':
-      case 'date':
-      case 'url':
-      case 'hex':
-      case 'email': {
-        setValue = (value: any) => {
-          const { valueRef } = node.viewCtx.refs;
-          valueRef!.value = value;
+        const onMoveDown = async () => {
+          await node.onViewChange({
+            source: 'operation',
+            value: 'moveDown',
+          });
         }
-        break;
-      }
-      default: {
-        setValue = (value: any) => {
-          const { valueRef } = node.viewCtx.refs;
-          valueRef!.innerText = value;
+        const onDelete = async () => {
+          await node.onViewChange({
+            source: 'operation',
+            value: 'delete',
+          });
         }
+        const onCopy = async () => {
+          await node.onViewChange({
+            source: 'operation',
+            value: 'copy',
+          });
+        }
+
+        const operationsDom = document.createElement('div');
+        operationsDom.classList.add(getClass(styles, 'operations'));
+
+        const moveUpBtn = document.createElement('span');
+        moveUpBtn.classList.add(getClass(styles, 'item'));
+        moveUpBtn.innerText = '上移';
+        moveUpBtn.onclick = onMoveUp;
+        operationsDom.appendChild(moveUpBtn);
+
+        const moveDownBtn = document.createElement('span');
+        moveDownBtn.classList.add(getClass(styles, 'item'));
+        moveDownBtn.innerText = '下移';
+        moveDownBtn.onclick = onMoveDown;
+        operationsDom.appendChild(moveDownBtn);
+
+        const deleteBtn = document.createElement('span');
+        deleteBtn.classList.add(getClass(styles, 'item'));
+        deleteBtn.innerText = '删除';
+        deleteBtn.onclick = onDelete;
+        operationsDom.appendChild(deleteBtn);
+
+        const copyBtn = document.createElement('span');
+        copyBtn.classList.add(getClass(styles, 'item'));
+        copyBtn.innerText = '复制';
+        operationsDom.appendChild(copyBtn);
+        copyBtn.onclick = onCopy;
+
+        dom.appendChild(operationsDom);
       }
+
+      dom.classList.add(getClass(styles, 'fieldName'));
+      
+      return dom;
     }
+  
+    function createValueVisibleCtrlDom(): HTMLElement {
+      const dom = document.createElement('span');
+      dom.innerText = '>';
+      dom.classList.add(getClass(styles, 'valueVisibleCtrl'));
+      dom.onclick = () => {
+        node.valueVisible = !node.valueVisible;
+      }
+      node.viewCtx.setValueVisible = (visible: boolean) => {
+        const { valueVisibleCtrlRef, valueRef } = node.viewCtx.refs;
+        if (visible) {
+          valueVisibleCtrlRef?.classList.remove(getClass(styles, 'fold'));
+          (valueRef?.outerValueRef || valueRef)?.classList.remove(getClass(styles, 'fold'));
+        } else {
+          valueVisibleCtrlRef?.classList.add(getClass(styles, 'fold'));
+          (valueRef?.outerValueRef || valueRef)?.classList.add(getClass(styles, 'fold'));
+        }
+      }
+      return dom;
+    }
+  
+    function createValueDom(): HTMLElement {
+      const value = controller.getValue();
+  
+      let dom: HTMLElement;
+      switch(type) {
+        case 'object': {
+          dom = document.createElement('div');
+          break;
+        }
+        case 'array': {
+          dom = document.createElement('div');
 
-    return setValue;
-  }
+          const innerValueDom = document.createElement('div');
+          innerValueDom.classList.add(getClass(styles, 'innerFieldValue'));
+          dom.appendChild(innerValueDom);
+          dom.innerValueRef = innerValueDom;
+          innerValueDom.outerValueRef = dom;
 
-  function createErrorDom() {
-    const dom = document.createElement('div') as HTMLElement;
-    dom.classList.add(styles.error || 'error', styles.hidden || 'hidden');
-    return dom;
+          const onAddItem = async () => {
+            await node.onViewChange({
+              source: 'operation',
+              value: 'addItem',
+            });
+          }
+          const operationsDom = document.createElement('div');
+          operationsDom.classList.add(getClass(styles, 'operations'));
+          const addBtn = document.createElement('button');
+          addBtn.innerText = '+ add item';
+          addBtn.onclick = onAddItem;
+          operationsDom.appendChild(addBtn);
+
+          dom.appendChild(operationsDom);
+          break;
+        }
+        case 'string': {
+          dom = document.createElement('input');
+          (dom as HTMLInputElement).type = 'text';
+          (dom as HTMLInputElement).value = value;
+          dom.oninput = async (e) => {
+            await node.onViewChange({
+              source: 'input',
+              value: String(e.target?.value),
+            });
+          }
+          node.viewCtx.setValue = (value: string) => {
+            (dom as HTMLInputElement).value = value;
+          }
+          break;
+        }
+        case 'float':
+        case 'integer':
+        case 'number': {
+          dom = document.createElement('input');
+          (dom as HTMLInputElement).type = 'text';
+          (dom as HTMLInputElement).value = value;
+          dom.oninput = async (e) => {
+            let valueCur = e.target?.value;
+            if (valueCur.trim() !== '') {
+              valueCur = Number(valueCur);
+            }
+            await node.onViewChange({
+              source: 'input',
+              value: valueCur,
+            });
+          }
+          node.viewCtx.setValue = (value: number) => {
+            (dom as HTMLInputElement).value = String(value);
+          }
+          break;
+        }
+        case 'boolean': {
+          dom = document.createElement('div');
+          const name = controller.utils.genId();
+
+          [true, false].forEach((v: boolean) => {
+            const radioDom = document.createElement('input');
+            (radioDom as HTMLInputElement).type = 'radio';
+            (radioDom as HTMLInputElement).name = name;
+            (radioDom as HTMLInputElement).value = String(v);
+            radioDom.onclick = async (e) => {
+              if (e.target?.checked) {
+                await node.onViewChange({
+                  source: 'input',
+                  value: v,
+                });
+              }
+            }
+            radioDom.checked = value === v;
+
+            const labelDom = document.createElement('span');
+            labelDom.innerText = String(v);
+            labelDom.style.color = '#fff';
+            labelDom.style.marginRight = '10px';
+
+            dom.appendChild(radioDom);
+            dom.appendChild(labelDom);
+          });
+
+          node.viewCtx.setValue = (value: boolean) => {
+            Array.from(dom.children).forEach(c => {
+              if ((c as HTMLInputElement).type === 'radio') {
+                (c as HTMLInputElement).checked = (c as HTMLInputElement).value === String(value); 
+              }
+            });
+          }
+  
+          break;
+        }
+        case 'enum': {
+          dom = document.createElement('div');
+          const name = controller.utils.genId();
+  
+          const values = controller.descriptor?.enum || [];
+  
+          values.forEach((v: string) => {
+            const radioDom = document.createElement('input');
+            (radioDom as HTMLInputElement).type = 'radio';
+            (radioDom as HTMLInputElement).name = name;
+            (radioDom as HTMLInputElement).value = v;
+            radioDom.onclick = async (e) => {
+              if (e.target?.checked) {
+                await node.onViewChange({
+                  source: 'input',
+                  value: e.target?.value,
+                });
+              }
+            }
+            radioDom.checked = v === value;
+  
+            const labelDom = document.createElement('span');
+            labelDom.innerText = v;
+            labelDom.style.color = '#fff';
+            labelDom.style.marginRight = '10px';
+  
+            dom.appendChild(radioDom);
+            dom.appendChild(labelDom);
+          });
+
+          node.viewCtx.setValue = (value: string) => {
+            Array.from(dom.children).forEach(c => {
+              if ((c as HTMLInputElement).type === 'radio') {
+                (c as HTMLInputElement).checked = (c as HTMLInputElement).value === value; 
+              }
+            });
+          }
+  
+          break;
+        }
+        default: {
+          dom = document.createElement('div');
+          dom.innerText = `${value}`;
+          node.viewCtx.setValue = (value: any) => {
+            dom.innerText = `${value}`;
+          }
+        }
+      }
+      dom.classList.add(getClass(styles, 'fieldValue'));
+  
+      return dom;
+    }
+  
+    function createErrorDom() {
+      const dom = document.createElement('div') as HTMLElement;
+      dom.classList.add(getClass(styles, 'error'), getClass(styles, 'hidden'));
+      node.viewCtx.setError = (message?: string) => {
+        const { errorRef } = node.viewCtx.refs;
+        if (message) {
+          errorRef.innerText = `${message}`;
+          errorRef.classList.remove(getClass(styles, 'hidden'));
+        } else {
+          errorRef.innerText = '';
+          errorRef.classList.add(getClass(styles, 'hidden'));
+        }
+      }
+      return dom;
+    }
   }
 }
 
-export function mountViewNative(form: Form) {
-  form.container.appendChild(form.rootFormFiled?.node?.viewCtx?.refs?.containerRef);
+export function genMountViewNative() {
+  return function mountViewNative(form: Form) {
+    const rootNode = form?.rootFormFiled?.node;
+    if (!rootNode) {
+      return;
+    }
+
+    const traverse = (formNode: FormNode) => {
+      const { viewCtx, children } = formNode;
+      const { containerRef, valueRef } = viewCtx.refs;
+      children.forEach((childNode: FormNode) => {
+        valueRef.appendChild(traverse(childNode));
+      });
+      return containerRef;
+    }
+
+    form.container.appendChild(traverse(rootNode));
+  }
 }
