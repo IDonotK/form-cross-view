@@ -1,13 +1,30 @@
 import { cloneDeep } from 'lodash';
 
 import { Form, Utils } from './Form';
-import { FormNode } from './FormNode';
 import {
   validateField,
   DescriptorCompiled,
   FieldValidateError as FormFieldError,
 } from './validator';
 
+export interface ViewCtx {
+  syncChildren?: () => void;
+  setValue?: (value: any) => void;
+  setName?: (name: string) => void;
+  setValueVisible?: (visible: boolean) => void;
+  setError?: (message?: string) => void;
+  [k: string]: any;
+}
+
+function callViewCtxApi(field: FormField, api: string, ...args: any[]) {
+  if (typeof field.viewCtx?.[api] === 'function') {
+    try {
+      field.viewCtx[api].call(field, ...args);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+}
 
 export class FormField {
   id: string;
@@ -38,13 +55,15 @@ export class FormField {
 
   error: FormFieldError[] | null = null;
 
-  node: FormNode;
-
   parent: FormField | null = null;
 
   children: FormField[] = [];
 
   utils: Utils;
+
+  private _isValueVisible: boolean = true;
+
+  viewCtx: ViewCtx = {};
 
   constructor(descriptorCompiled: DescriptorCompiled, form: Form) {
     this.form = form;
@@ -67,7 +86,16 @@ export class FormField {
     this.isArrayItem = isArrayItem ?? false;
     this.descriptor = descriptor;
 
-    this.node = new FormNode(this);
+    this.form.createView(this);
+  }
+
+  get valueVisible() {
+    return this._isValueVisible;
+  }
+
+  set valueVisible(visible: boolean) {
+    this._isValueVisible = visible;
+    callViewCtxApi(this, 'setValueVisible', visible);
   }
 
   newChild(descriptorCompiled: DescriptorCompiled) {
@@ -123,7 +151,9 @@ export class FormField {
   addChild(field: FormField, syncView: boolean = false) {
     this.utils.addArrayItem(this.children, field);
     field.parent = this;
-    this.node.addChild(field?.node, syncView);
+    if (syncView) {
+      callViewCtxApi(this, 'syncChildren');
+    }
   }
 
   moveChild(field: FormField, gap: number) {
@@ -132,7 +162,7 @@ export class FormField {
       const [indexStart, indexEnd] = range;
       this.syncChildrenInfo(indexStart, indexEnd);
     }
-    this.node.moveChild(field?.node, gap);
+    callViewCtxApi(this, 'syncChildren');
   }
 
   removeChild(field: FormField) {
@@ -142,7 +172,7 @@ export class FormField {
       const [indexStart, indexEnd] = range;
       this.syncChildrenInfo(indexStart, indexEnd);
     }
-    this.node.removeChild(field?.node);
+    callViewCtxApi(this, 'syncChildren');
   }
 
   syncChildrenInfo(indexStart: number, indexEnd: number) {
@@ -156,7 +186,7 @@ export class FormField {
     }
     for (let i = indexStart; i <= indexEnd; i++) {
       const child = children[i];
-      const { name, node, path } = child;
+      const { name, path } = child;
       const nameTarget = String(i);
       if (name === nameTarget) {
         continue;
@@ -164,7 +194,7 @@ export class FormField {
         child.name = nameTarget;
         const pathTarget = path.replace(/([^.]+)$/, '') + nameTarget;
         updatePath(child, pathTarget, path);
-        node.setName(nameTarget);
+        callViewCtxApi(child, 'setName', nameTarget);
       }
     }
   }
@@ -213,17 +243,17 @@ export class FormField {
 
   setError(error: FormFieldError[] | null) {
     const {
-      node, id, form
+      id, form
     } = this;
 
     if (error?.length) {
       this.error = error;
       const message = error.map(e => e.message).join(';\n');
-      node.setError(message);
+      callViewCtxApi(this, 'setError', message);
       form.errorFields.set(id, this);
     } else {
       this.error = null;
-      node.setError();
+      callViewCtxApi(this, 'setError');
       form.errorFields.delete(id);
     }
   }
@@ -371,7 +401,7 @@ export class FormField {
         }
       }
     } else {
-      this.node?.setValue(valueNew);
+      callViewCtxApi(this, 'setValue', valueNew);
     }
   }
 

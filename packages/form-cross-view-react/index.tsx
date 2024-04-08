@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import classnames from 'classnames';
-import { Form, FormNode } from 'form-cross-view-core';
+import { Form, FormField } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 
@@ -15,12 +15,7 @@ export function genCreateViewReact(styles?: Styles) {
     return styles?.[name] || name;
   }
 
-  return function createViewReact(node: FormNode) {
-    const { controller } = node;
-    if (!controller) {
-      throw Error('missing controller');
-    }
-
+  return function createViewReact(controller: FormField) {
     const Container = (props: any) => {
       return (
         <div className={getClass(styles, 'formField')}>{props.children}</div>
@@ -40,28 +35,28 @@ export function genCreateViewReact(styles?: Styles) {
         }
 
         const onMoveUp = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveUp',
           });
         }
 
         const onMoveDown = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveDown',
           });
         }
 
         const onDelete = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'delete',
           });
         }
 
         const onCopy = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'copy',
           });
@@ -86,7 +81,7 @@ export function genCreateViewReact(styles?: Styles) {
                   [getClass(styles, 'valueVisibleCtrl')]: true,
                   [getClass(styles, 'fold')]: !props.valueVisible,
                 })}
-                onClick={() => node.valueVisible = !node.valueVisible }
+                onClick={() => controller.valueVisible = !controller.valueVisible }
               >
                 {'>'}
               </span>
@@ -123,7 +118,7 @@ export function genCreateViewReact(styles?: Styles) {
         }
         case 'array': {
           const onAddItem = async () => {
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'operation',
               value: 'addItem',
             });
@@ -144,11 +139,11 @@ export function genCreateViewReact(styles?: Styles) {
         }
         case 'string': {
           const [valueDisplay, setValueDisplay] = useState(value);
-          node.viewCtx.setValue = (value: string) => setValueDisplay(value);
+          controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
           const onInput = async (e) => {
             const valueCur = String(e.target?.value);
             setValueDisplay(valueCur);
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: valueCur,
             });
@@ -161,14 +156,14 @@ export function genCreateViewReact(styles?: Styles) {
         case 'integer':
         case 'number': {
           const [valueDisplay, setValueDisplay] = useState(value);
-          node.viewCtx.setValue = (value: number) => setValueDisplay(value);
+          controller.viewCtx.setValue = (value: number) => setValueDisplay(value);
           const onInput = async (e) => {
             let valueCur = e.target?.value;
             setValueDisplay(valueCur);
             if (valueCur.trim() !== '') {
               valueCur = Number(valueCur);
             }
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: valueCur,
             });
@@ -180,7 +175,7 @@ export function genCreateViewReact(styles?: Styles) {
         default:
       }
       const [valueDisplay, setValueDisplay] = useState(value);
-      node.viewCtx.setValue = (value: string) => setValueDisplay(value);
+      controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
       return (
         <div className={getClass(styles, 'fieldValue')}>{valueDisplay}</div>
       )
@@ -199,7 +194,7 @@ export function genCreateViewReact(styles?: Styles) {
       )
     }
 
-    const NodeView = (props: any) => {      
+    const NodeView = () => {      
       const [comment, setComment] = useState(controller.comment);
 
       const formatName = (name: string) => {
@@ -209,19 +204,19 @@ export function genCreateViewReact(styles?: Styles) {
         return name;
       }
       const [name, setName] = useState(formatName(controller.name));
-      node.viewCtx.setName = (name: string) => setName(formatName(name));
+      controller.viewCtx.setName = (name: string) => setName(formatName(name));
 
-      const [valueVisible, setValueVisible] = useState(node.valueVisible);
-      node.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
+      const [valueVisible, setValueVisible] = useState(controller.valueVisible);
+      controller.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
 
       const messageOrigin = controller.error?.map(e => e.message).join(';\n');
       const [message, setMessage] = useState(messageOrigin);
-      node.viewCtx.setError = (message?: string) => setMessage(message || '');
+      controller.viewCtx.setError = (message?: string) => setMessage(message || '');
 
-      const [children, setChildren] = useState(node.children.map((c: FormNode) => c.viewCtx.view));
-      node.viewCtx.syncChildren = () => {
+      const [children, setChildren] = useState(controller.children.map((c: FormField) => c.viewCtx.view));
+      controller.viewCtx.syncChildren = () => {
         console.log('syncChildren');
-        setChildren(node.children.map((c: FormNode) => c.viewCtx.view));
+        setChildren(controller.children.map((c: FormField) => c.viewCtx.view));
       };
   
       return (
@@ -239,18 +234,18 @@ export function genCreateViewReact(styles?: Styles) {
     }
     NodeView.__id__ = controller.id;
 
-    node.viewCtx.view = NodeView;
+    controller.viewCtx.view = NodeView;
   }
 }
 
 export function genMountViewReact(setFormRender?: Function) {
   return function mountViewReact(form: Form) {
-    const rootNode = form?.rootFormFiled?.node;
-    if (!rootNode) {
+    const { rootFormFiled } = form;
+    if (!rootFormFiled) {
       return;
     }
 
-    const { viewCtx: { view: NodeView } } = rootNode;
+    const { viewCtx: { view: NodeView } } = rootFormFiled;
 
     setFormRender && setFormRender(() => <NodeView />);
   }

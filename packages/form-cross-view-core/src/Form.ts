@@ -1,5 +1,4 @@
 import { FormField } from './FormField';
-import { FormNode } from './FormNode';
 import * as utils from './utils';
 import Events from './Events';
 import {
@@ -13,7 +12,7 @@ export type Utils = typeof utils
 export class Form {
   container: HTMLElement;
 
-  createView: (node: FormNode) => void;
+  createView: (field: FormField) => void;
 
   mountView: (form: Form) => void;
 
@@ -33,7 +32,7 @@ export class Form {
     container: HTMLElement,
     descriptor: Descriptor,
     customize?: {
-      createView?: (node: FormNode) => void,
+      createView?: (field: FormField) => void,
       mountView?: (form: Form) => void,
     }
   ) {

@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { Form, FormNode } from 'form-cross-view-core';
+import { Form, FormField } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 
@@ -14,12 +14,7 @@ export function genCreateViewSolid(styles?: Styles) {
     return styles?.[name] || name;
   }
 
-  return function createViewSolid(node: FormNode) {
-    const { controller } = node;
-    if (!controller) {
-      throw Error('missing controller');
-    }
-
+  return function createViewSolid(controller: FormField) {
     const Container = (props: any) => {
       return (
         <div class={getClass(styles, 'formField')}>{props.children}</div>
@@ -39,28 +34,28 @@ export function genCreateViewSolid(styles?: Styles) {
         }
 
         const onMoveUp = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveUp',
           });
         }
 
         const onMoveDown = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveDown',
           });
         }
 
         const onDelete = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'delete',
           });
         }
 
         const onCopy = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'copy',
           });
@@ -85,7 +80,7 @@ export function genCreateViewSolid(styles?: Styles) {
                   [getClass(styles, 'valueVisibleCtrl')]: true,
                   [getClass(styles, 'fold')]: !props.valueVisible(),
                 }}
-                onClick={() => node.valueVisible = !node.valueVisible }
+                onClick={() => controller.valueVisible = !controller.valueVisible }
               >
                 {'>'}
               </span>
@@ -122,7 +117,7 @@ export function genCreateViewSolid(styles?: Styles) {
         }
         case 'array': {
           const onAddItem = async () => {
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'operation',
               value: 'addItem',
             });
@@ -143,9 +138,9 @@ export function genCreateViewSolid(styles?: Styles) {
         }
         case 'string': {
           const [valueDisplay, setValueDisplay] = createSignal({ value });
-          node.viewCtx.setValue = (value: string) => setValueDisplay({ value });
+          controller.viewCtx.setValue = (value: string) => setValueDisplay({ value });
           const onInput = async (e) => {
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: String(e.target?.value),
             });
@@ -158,13 +153,13 @@ export function genCreateViewSolid(styles?: Styles) {
         case 'integer':
         case 'number': {
           const [valueDisplay, setValueDisplay] = createSignal({ value });
-          node.viewCtx.setValue = (value: number) => setValueDisplay({ value });
+          controller.viewCtx.setValue = (value: number) => setValueDisplay({ value });
           const onInput = async (e) => {
             let valueCur = e.target?.value;
             if (valueCur.trim() !== '') {
               valueCur = Number(valueCur);
             }
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: valueCur,
             });
@@ -175,12 +170,12 @@ export function genCreateViewSolid(styles?: Styles) {
         }
         case 'boolean': {
           const [valueDisplay, setValueDisplay] = createSignal({ value });
-          node.viewCtx.setValue = (value: boolean) => setValueDisplay({ value });
+          controller.viewCtx.setValue = (value: boolean) => setValueDisplay({ value });
           const values = [true, false];
           const name = controller.utils.genId();
           const onClick = async (e) => {
             if (e.target?.checked) {
-              await node.onViewChange({
+              await controller.onValueChange({
                 source: 'input',
                 value: e.target?.value === 'true',
               });
@@ -203,12 +198,12 @@ export function genCreateViewSolid(styles?: Styles) {
         }
         case 'enum': {
           const [valueDisplay, setValueDisplay] = createSignal({ value });
-          node.viewCtx.setValue = (value: string) => setValueDisplay({ value });
+          controller.viewCtx.setValue = (value: string) => setValueDisplay({ value });
           const values = (controller?.descriptor?.enum || []).map((v: any) => String(v));
           const name = controller.utils.genId();
           const onClick = async (e) => {
             if (e.target?.checked) {
-              await node.onViewChange({
+              await controller.onValueChange({
                 source: 'input',
                 value: e.target?.value,
               });
@@ -232,7 +227,7 @@ export function genCreateViewSolid(styles?: Styles) {
         default:
       }
       const [valueDisplay, setValueDisplay] = createSignal({ value });
-      node.viewCtx.setValue = (value: string) => setValueDisplay({ value });
+      controller.viewCtx.setValue = (value: string) => setValueDisplay({ value });
       return (
         <div classList={getClass(styles, 'fieldValue')}>{valueDisplay()?.value}</div>
       )
@@ -251,7 +246,7 @@ export function genCreateViewSolid(styles?: Styles) {
       )
     }
 
-    const NodeView = (props: any) => {
+    const NodeView = () => {
       const [comment, setComment] = createSignal(controller.comment);
 
       const formatName = (name: string) => {
@@ -261,19 +256,19 @@ export function genCreateViewSolid(styles?: Styles) {
         return name;
       }
       const [name, setName] = createSignal(formatName(controller.name));
-      node.viewCtx.setName = (name: string) => setName(formatName(name));
+      controller.viewCtx.setName = (name: string) => setName(formatName(name));
 
-      const [valueVisible, setValueVisible] = createSignal(node.valueVisible);
-      node.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
+      const [valueVisible, setValueVisible] = createSignal(controller.valueVisible);
+      controller.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
 
       const messageOrigin = controller.error?.map(e => e.message).join(';\n');
       const [message, setMessage] = createSignal(messageOrigin);
-      node.viewCtx.setError = (message?: string) => setMessage(message || '');
+      controller.viewCtx.setError = (message?: string) => setMessage(message || '');
 
-      const [children, setChildren] = createSignal(node.children.map((c: FormNode) => c.viewCtx.view));
-      node.viewCtx.syncChildren = () => {
+      const [children, setChildren] = createSignal(controller.children.map((c: FormField) => c.viewCtx.view));
+      controller.viewCtx.syncChildren = () => {
         console.log('syncChildren');
-        setChildren(node.children.map((c: FormNode) => c.viewCtx.view));
+        setChildren(controller.children.map((c: FormField) => c.viewCtx.view));
       };
 
       return (
@@ -293,18 +288,18 @@ export function genCreateViewSolid(styles?: Styles) {
     }
     NodeView.__id__ = controller.id;
 
-    node.viewCtx.view = NodeView;
+    controller.viewCtx.view = NodeView;
   }
 }
 
 export function genMountViewSolid(setFormRender?: Function) {
   return function mountViewSolid(form: Form) {
-    const rootNode = form?.rootFormFiled?.node;
-    if (!rootNode) {
+    const { rootFormFiled } = form;
+    if (!rootFormFiled) {
       return;
     }
 
-    const { viewCtx: { view: NodeView } } = rootNode;
+    const { viewCtx: { view: NodeView } } = rootFormFiled;
 
     setFormRender && setFormRender(NodeView);
   }

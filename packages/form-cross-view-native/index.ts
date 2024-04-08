@@ -1,4 +1,4 @@
-import { Form, FormNode } from 'form-cross-view-core';
+import { Form, FormField } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 
@@ -13,12 +13,7 @@ export function genCreateViewNative(styles?: Styles) {
     return styles?.[name] || name;
   }
 
-  return function createViewNative(node: FormNode) {
-    const { controller } = node;
-    if (!controller) {
-      throw Error('missing controller');
-    }
-  
+  return function createViewNative(controller: FormField) {  
     const refs: { [k: string]: HTMLElement } = {};
   
     refs.containerRef = createContainer();
@@ -36,14 +31,14 @@ export function genCreateViewNative(styles?: Styles) {
     refs.errorRef = createErrorDom();
     refs.containerRef.appendChild(refs.errorRef);
   
-    node.viewCtx.refs = refs;
+    controller.viewCtx.refs = refs;
 
-    node.viewCtx.syncChildren = () => {
+    controller.viewCtx.syncChildren = () => {
       console.log('syncChildren');
-      const { children } = node;
-      const { valueRef } = node.viewCtx.refs;
+      const { children } = controller;
+      const { valueRef } = controller.viewCtx.refs;
       valueRef.innerHTML = '';
-      children.forEach((childNode: FormNode) => {
+      children.forEach((childNode: FormField) => {
         valueRef.appendChild(childNode.viewCtx.refs.containerRef);
       });
     };
@@ -80,7 +75,7 @@ export function genCreateViewNative(styles?: Styles) {
   
           const nameDom = document.createElement('span');
           nameDom.innerText = `${label}`;
-          node.viewCtx.setName = (name: string) => {
+          controller.viewCtx.setName = (name: string) => {
             nameDom.innerText = `${formatName(name)}`;
           }
   
@@ -94,7 +89,7 @@ export function genCreateViewNative(styles?: Styles) {
           dom = document.createElement('div');
           const nameDom = document.createElement('span');
           nameDom.innerText = `${label}`;
-          node.viewCtx.setName = (name: string) => {
+          controller.viewCtx.setName = (name: string) => {
             nameDom.innerText = `${formatName(name)}`;
           }
           dom.appendChild(nameDom);
@@ -103,25 +98,25 @@ export function genCreateViewNative(styles?: Styles) {
 
       if (controller.isArrayItem) {
         const onMoveUp = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveUp',
           });
         }
         const onMoveDown = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveDown',
           });
         }
         const onDelete = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'delete',
           });
         }
         const onCopy = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'copy',
           });
@@ -167,10 +162,10 @@ export function genCreateViewNative(styles?: Styles) {
       dom.innerText = '>';
       dom.classList.add(getClass(styles, 'valueVisibleCtrl'));
       dom.onclick = () => {
-        node.valueVisible = !node.valueVisible;
+        controller.valueVisible = !controller.valueVisible;
       }
-      node.viewCtx.setValueVisible = (visible: boolean) => {
-        const { valueVisibleCtrlRef, valueRef } = node.viewCtx.refs;
+      controller.viewCtx.setValueVisible = (visible: boolean) => {
+        const { valueVisibleCtrlRef, valueRef } = controller.viewCtx.refs;
         if (visible) {
           valueVisibleCtrlRef?.classList.remove(getClass(styles, 'fold'));
           (valueRef?.outerValueRef || valueRef)?.classList.remove(getClass(styles, 'fold'));
@@ -201,7 +196,7 @@ export function genCreateViewNative(styles?: Styles) {
           innerValueDom.outerValueRef = dom;
 
           const onAddItem = async () => {
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'operation',
               value: 'addItem',
             });
@@ -221,12 +216,12 @@ export function genCreateViewNative(styles?: Styles) {
           (dom as HTMLInputElement).type = 'text';
           (dom as HTMLInputElement).value = value;
           dom.oninput = async (e) => {
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: String(e.target?.value),
             });
           }
-          node.viewCtx.setValue = (value: string) => {
+          controller.viewCtx.setValue = (value: string) => {
             (dom as HTMLInputElement).value = value;
           }
           break;
@@ -242,12 +237,12 @@ export function genCreateViewNative(styles?: Styles) {
             if (valueCur.trim() !== '') {
               valueCur = Number(valueCur);
             }
-            await node.onViewChange({
+            await controller.onValueChange({
               source: 'input',
               value: valueCur,
             });
           }
-          node.viewCtx.setValue = (value: number) => {
+          controller.viewCtx.setValue = (value: number) => {
             (dom as HTMLInputElement).value = String(value);
           }
           break;
@@ -263,7 +258,7 @@ export function genCreateViewNative(styles?: Styles) {
             (radioDom as HTMLInputElement).value = String(v);
             radioDom.onclick = async (e) => {
               if (e.target?.checked) {
-                await node.onViewChange({
+                await controller.onValueChange({
                   source: 'input',
                   value: v,
                 });
@@ -280,7 +275,7 @@ export function genCreateViewNative(styles?: Styles) {
             dom.appendChild(labelDom);
           });
 
-          node.viewCtx.setValue = (value: boolean) => {
+          controller.viewCtx.setValue = (value: boolean) => {
             Array.from(dom.children).forEach(c => {
               if ((c as HTMLInputElement).type === 'radio') {
                 (c as HTMLInputElement).checked = (c as HTMLInputElement).value === String(value); 
@@ -303,7 +298,7 @@ export function genCreateViewNative(styles?: Styles) {
             (radioDom as HTMLInputElement).value = v;
             radioDom.onclick = async (e) => {
               if (e.target?.checked) {
-                await node.onViewChange({
+                await controller.onValueChange({
                   source: 'input',
                   value: e.target?.value,
                 });
@@ -320,7 +315,7 @@ export function genCreateViewNative(styles?: Styles) {
             dom.appendChild(labelDom);
           });
 
-          node.viewCtx.setValue = (value: string) => {
+          controller.viewCtx.setValue = (value: string) => {
             Array.from(dom.children).forEach(c => {
               if ((c as HTMLInputElement).type === 'radio') {
                 (c as HTMLInputElement).checked = (c as HTMLInputElement).value === value; 
@@ -333,7 +328,7 @@ export function genCreateViewNative(styles?: Styles) {
         default: {
           dom = document.createElement('div');
           dom.innerText = `${value}`;
-          node.viewCtx.setValue = (value: any) => {
+          controller.viewCtx.setValue = (value: any) => {
             dom.innerText = `${value}`;
           }
         }
@@ -346,8 +341,8 @@ export function genCreateViewNative(styles?: Styles) {
     function createErrorDom() {
       const dom = document.createElement('div') as HTMLElement;
       dom.classList.add(getClass(styles, 'error'), getClass(styles, 'hidden'));
-      node.viewCtx.setError = (message?: string) => {
-        const { errorRef } = node.viewCtx.refs;
+      controller.viewCtx.setError = (message?: string) => {
+        const { errorRef } = controller.viewCtx.refs;
         if (message) {
           errorRef.innerText = `${message}`;
           errorRef.classList.remove(getClass(styles, 'hidden'));
@@ -363,20 +358,20 @@ export function genCreateViewNative(styles?: Styles) {
 
 export function genMountViewNative() {
   return function mountViewNative(form: Form) {
-    const rootNode = form?.rootFormFiled?.node;
-    if (!rootNode) {
+    const { rootFormFiled } = form;
+    if (!rootFormFiled) {
       return;
     }
 
-    const traverse = (formNode: FormNode) => {
-      const { viewCtx, children } = formNode;
+    const traverse = (field: FormField) => {
+      const { viewCtx, children } = field;
       const { containerRef, valueRef } = viewCtx.refs;
-      children.forEach((childNode: FormNode) => {
+      children.forEach((childNode: FormField) => {
         valueRef.appendChild(traverse(childNode));
       });
       return containerRef;
     }
 
-    form.container.appendChild(traverse(rootNode));
+    form.container.appendChild(traverse(rootFormFiled));
   }
 }

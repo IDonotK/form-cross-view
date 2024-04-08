@@ -1,5 +1,5 @@
 import { ref, shallowRef, provide, inject } from 'vue';
-import { Form, FormNode } from 'form-cross-view-core';
+import { Form, FormField } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
 
@@ -14,12 +14,7 @@ export function genCreateViewVue(styles?: Styles) {
     return styles?.[name] || name;
   }
 
-  return function createViewVue(node: FormNode) {
-    const { controller } = node;
-    if (!controller) {
-      throw Error('missing controller');
-    }
-
+  return function createViewVue(controller: FormField) {
     const Container = {
       setup() {
         return {
@@ -52,28 +47,28 @@ export function genCreateViewVue(styles?: Styles) {
     const FieldOperations = {
       setup() {
         const onMoveUp = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveUp',
           });
         }
 
         const onMoveDown = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'moveDown',
           });
         }
 
         const onDelete = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'delete',
           });
         }
 
         const onCopy = async () => {
-          await node.onViewChange({
+          await controller.onValueChange({
             source: 'operation',
             value: 'copy',
           });
@@ -107,7 +102,6 @@ export function genCreateViewVue(styles?: Styles) {
         return {
           styles,
           getClass,
-          node,
           controller,
         }
       },
@@ -122,7 +116,7 @@ export function genCreateViewVue(styles?: Styles) {
                     [getClass(styles, 'valueVisibleCtrl')]: true,
                     [getClass(styles, 'fold')]: !valueVisible,
                   }"
-                  @click="() => node.valueVisible = !node.valueVisible"
+                  @click="() => controller.valueVisible = !controller.valueVisible"
                 >
                   {{'>'}}
                 </span>
@@ -170,7 +164,7 @@ export function genCreateViewVue(styles?: Styles) {
             props: ['valueVisible'],
             setup() {
               const onAddItem = async () => {
-                await node.onViewChange({
+                await controller.onValueChange({
                   source: 'operation',
                   value: 'addItem',
                 });
@@ -202,10 +196,10 @@ export function genCreateViewVue(styles?: Styles) {
             setup() {
               const value = controller.getValue();
               const valueDisplay = ref(value);
-              node.viewCtx.setValue = (value: string) => valueDisplay.value = value;
+              controller.viewCtx.setValue = (value: string) => valueDisplay.value = value;
               const onInput = async (e) => {
                 const valueCur = String(e.target?.value);
-                await node.onViewChange({
+                await controller.onValueChange({
                   source: 'input',
                   value: valueCur,
                 });
@@ -234,14 +228,14 @@ export function genCreateViewVue(styles?: Styles) {
             setup() {
               const value = controller.getValue();
               const valueDisplay = ref(value);
-              node.viewCtx.setValue = (value: number) => valueDisplay.value = value;
+              controller.viewCtx.setValue = (value: number) => valueDisplay.value = value;
               const onInput = async (e) => {
                 let valueCur = e.target?.value;
                 valueDisplay.value = valueCur;
                 if (valueCur.trim() !== '') {
                   valueCur = Number(valueCur);
                 }
-                await node.onViewChange({
+                await controller.onValueChange({
                   source: 'input',
                   value: valueCur,
                 });
@@ -269,7 +263,7 @@ export function genCreateViewVue(styles?: Styles) {
         setup() {
           const value = controller.getValue();
           const valueDisplay = ref(value);
-          node.viewCtx.setValue = (value: any) => valueDisplay.value = value;
+          controller.viewCtx.setValue = (value: any) => valueDisplay.value = value;
           return {
             styles,
             getClass,
@@ -321,19 +315,19 @@ export function genCreateViewVue(styles?: Styles) {
           return name;
         }
         const name = ref(formatName(controller.name));
-        node.viewCtx.setName = (_name: string) => name.value = formatName(_name);
+        controller.viewCtx.setName = (_name: string) => name.value = formatName(_name);
 
-        const valueVisible = ref(node.valueVisible);
-        node.viewCtx.setValueVisible = (visible: boolean) => valueVisible.value = visible;
+        const valueVisible = ref(controller.valueVisible);
+        controller.viewCtx.setValueVisible = (visible: boolean) => valueVisible.value = visible;
 
         const messageOrigin = controller.error?.map(e => e.message).join(';\n');
         const message = ref(messageOrigin);
-        node.viewCtx.setError = (_message?: string) => message.value = (_message || '');
+        controller.viewCtx.setError = (_message?: string) => message.value = (_message || '');
 
-        const children = shallowRef(node.children.map((c: FormNode) => c.viewCtx.view));
-        node.viewCtx.syncChildren = () => {
+        const children = shallowRef(controller.children.map((c: FormField) => c.viewCtx.view));
+        controller.viewCtx.syncChildren = () => {
           console.log('syncChildren');
-          children.value = node.children.map((c: FormNode) => c.viewCtx.view);
+          children.value = controller.children.map((c: FormField) => c.viewCtx.view);
         };
 
         return {
@@ -360,18 +354,18 @@ export function genCreateViewVue(styles?: Styles) {
       `
     }
 
-    node.viewCtx.view = NodeView;
+    controller.viewCtx.view = NodeView;
   }
 }
 
 export function genMountViewVue(setFormRender?: Function) {
   return function mountViewVue(form: Form) {
-    const rootNode = form?.rootFormFiled?.node;
-    if (!rootNode) {
+    const { rootFormFiled } = form;
+    if (!rootFormFiled) {
       return;
     }
 
-    const { viewCtx: { view: NodeView } } = rootNode;
+    const { viewCtx: { view: NodeView } } = rootFormFiled;
 
     setFormRender && setFormRender(NodeView);
   }
