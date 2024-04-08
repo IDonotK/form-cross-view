@@ -1,17 +1,16 @@
 <script setup lang="ts">
-  import { onMounted, defineAsyncComponent } from 'vue';
+  import { shallowRef, onMounted } from 'vue';
   // import FormTest from './Form';
 
   import { Form } from 'form-cross-view-core';
   import { genCreateViewVue, genMountViewVue } from 'form-cross-view-vue';
   import 'form-cross-view-vue/dist/style.css';
 
-  let setFormRender: (form: any) => void;
-  const FormRender = defineAsyncComponent(() => {
-    return new Promise((resolve) => {
-      setFormRender = resolve;
-    });
-  });
+
+  const formRender = shallowRef(null);
+  const setFormRender = (val) => {
+    formRender.value = val;
+  }
 
   onMounted(() => {
     const descriptor = {
@@ -93,7 +92,6 @@
       if (!formDiv) {
         throw Error('missing formDiv');
       }
-      formDiv.innerHTML = '';
 
       const formInstance = new Form(
         formDiv,
@@ -108,17 +106,24 @@
     }
 
     updateForm(descriptor);
-
-    // setFormRender(FormTest);
   });
 </script>
 
 <template>
     <div className='formContainer'>
-      <div id='form'><FormRender /></div>
+      <div id='form'>
+        <component :is="formRender" />
+      </div>
     </div>
 </template>
 
 <style scoped>
-
+  .formContainer {
+    width: 600px;
+    height: 650px;
+    border-radius: 12px;
+    background: #000;
+    user-select: none;
+    overflow-y: auto;
+  }
 </style>

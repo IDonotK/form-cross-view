@@ -21,10 +21,6 @@ export function genCreateViewReact(styles?: Styles) {
       throw Error('missing controller');
     }
 
-    const {
-      name: fieldName, type, comment,
-    } = controller;
-
     const Container = (props: any) => {
       return (
         <div className={getClass(styles, 'formField')}>{props.children}</div>
@@ -33,7 +29,7 @@ export function genCreateViewReact(styles?: Styles) {
 
     const Comment = (props: any) => {
       return (
-        <div className={getClass(styles, 'comment')}>{comment}</div>
+        <div className={getClass(styles, 'comment')}>{props.comment}</div>
       )
     }
 
@@ -80,7 +76,7 @@ export function genCreateViewReact(styles?: Styles) {
           </div>
         )
       }
-      switch(type) {
+      switch(controller.type) {
         case 'array':
         case 'object': {
           return (
@@ -112,7 +108,7 @@ export function genCreateViewReact(styles?: Styles) {
     const Value = (props: any) => {
       const value = controller.getValue();
 
-      switch(type) {
+      switch(controller.type) {
         case 'object': {
           return (
             <div
@@ -203,16 +199,16 @@ export function genCreateViewReact(styles?: Styles) {
       )
     }
 
-    const NodeView = (props: any) => {
-      const { node } = props;
-      
+    const NodeView = (props: any) => {      
+      const [comment, setComment] = useState(controller.comment);
+
       const formatName = (name: string) => {
         if (controller.isArrayItem) {
           return `item-${name}`;
         }
         return name;
       }
-      const [name, setName] = useState(formatName(fieldName));
+      const [name, setName] = useState(formatName(controller.name));
       node.viewCtx.setName = (name: string) => setName(formatName(name));
 
       const [valueVisible, setValueVisible] = useState(node.valueVisible);
@@ -222,31 +218,26 @@ export function genCreateViewReact(styles?: Styles) {
       const [message, setMessage] = useState(messageOrigin);
       node.viewCtx.setError = (message?: string) => setMessage(message || '');
 
-      const [children, setChildren] = useState(node.children);
+      const [children, setChildren] = useState(node.children.map((c: FormNode) => c.viewCtx.view));
       node.viewCtx.syncChildren = () => {
         console.log('syncChildren');
-        const { children } = node;
-        setChildren([...children]);
+        setChildren(node.children.map((c: FormNode) => c.viewCtx.view));
       };
   
       return (
         <Container>
-          <Comment />
+          <Comment comment={comment} />
           <Label valueVisible={valueVisible} name={name} />
           <Value valueVisible={valueVisible} >
             {
-              children.map((n: FormNode) => {
-                const {
-                  viewCtx: { view: NodeView }, controller: { id }
-                } = n;
-                return <NodeView key={id} node={n} />
-              })
+              children.map((ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />)
             }
           </Value>
           <ErrorView message={message}/>
         </Container>
       )
     }
+    NodeView.__id__ = controller.id;
 
     node.viewCtx.view = NodeView;
   }
@@ -261,6 +252,6 @@ export function genMountViewReact(setFormRender?: Function) {
 
     const { viewCtx: { view: NodeView } } = rootNode;
 
-    setFormRender && setFormRender(() => (<NodeView node={rootNode} />));
+    setFormRender && setFormRender(() => <NodeView />);
   }
 }

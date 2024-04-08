@@ -84,7 +84,7 @@ export class FormField {
       if (['object', 'array'].includes(type) && fields) {
         Object.keys(fields).forEach((f: string) => {
           const formFieldChild = traverse(fields[f]);
-          formField.addChild(formFieldChild);
+          formField.addChild(formFieldChild, true);
         });
       }
       return formField;
@@ -113,7 +113,8 @@ export class FormField {
     const descriptorCompiledChild = cloneDeep(descriptorCompiled);
 
     const formFieldChild = this.newChild(descriptorCompiledChild);
-
+    
+    //TODO: delay to setValue after mount?
     formFieldChild.setValue(field.getValue());
 
     return formFieldChild;
@@ -356,7 +357,10 @@ export class FormField {
           this.children[i]._orderInit = i;
         } else {
           const formFieldChild = this.createChild();
+
+          //TODO: delay to setValue after mount?
           formFieldChild.setValue(valueNew[i]);
+          
           formFieldChild._orderInit = i;
           this.addChild(formFieldChild, true);
         }

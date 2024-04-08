@@ -92,7 +92,6 @@ function App() {
     if (!formDiv) {
       throw Error('missing formDiv');
     }
-    formDiv.innerHTML = '';
 
     const formInstance = new Form(
       formDiv,

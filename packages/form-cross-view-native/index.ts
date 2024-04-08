@@ -18,10 +18,6 @@ export function genCreateViewNative(styles?: Styles) {
     if (!controller) {
       throw Error('missing controller');
     }
-
-    const {
-      name: fieldName, type, comment,
-    } = controller;
   
     const refs: { [k: string]: HTMLElement } = {};
   
@@ -43,6 +39,7 @@ export function genCreateViewNative(styles?: Styles) {
     node.viewCtx.refs = refs;
 
     node.viewCtx.syncChildren = () => {
+      console.log('syncChildren');
       const { children } = node;
       const { valueRef } = node.viewCtx.refs;
       valueRef.innerHTML = '';
@@ -60,7 +57,7 @@ export function genCreateViewNative(styles?: Styles) {
     function createCommentDom(): HTMLElement {
       const dom = document.createElement('div');
       dom.className = getClass(styles, 'comment');
-      dom.innerText = `${comment}`;
+      dom.innerText = `${controller.comment}`;
       return dom;
     }
   
@@ -71,10 +68,10 @@ export function genCreateViewNative(styles?: Styles) {
         }
         return name;
       }
-      const label = formatName(fieldName);
+      const label = formatName(controller.name);
   
       let dom: HTMLElement;
-      switch(type) {
+      switch(controller.type) {
         case 'array':
         case 'object': {
           dom = document.createElement('div');
@@ -189,7 +186,7 @@ export function genCreateViewNative(styles?: Styles) {
       const value = controller.getValue();
   
       let dom: HTMLElement;
-      switch(type) {
+      switch(controller.type) {
         case 'object': {
           dom = document.createElement('div');
           break;

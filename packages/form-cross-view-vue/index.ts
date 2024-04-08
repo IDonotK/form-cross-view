@@ -1,4 +1,4 @@
-import { ref, provide, inject } from 'vue';
+import { ref, shallowRef, provide, inject } from 'vue';
 import { Form, FormNode } from 'form-cross-view-core';
 
 import stylesDefault from './index.module.scss';
@@ -20,10 +20,6 @@ export function genCreateViewVue(styles?: Styles) {
       throw Error('missing controller');
     }
 
-    const {
-      name: fieldName, type, comment,
-    } = controller;
-
     const Container = {
       setup() {
         return {
@@ -39,11 +35,11 @@ export function genCreateViewVue(styles?: Styles) {
     }
 
     const Comment = {
+      props: ['comment'],
       setup() {
         return {
           styles,
           getClass,
-          comment,
         }
       },
       template: `
@@ -94,7 +90,7 @@ export function genCreateViewVue(styles?: Styles) {
       },
       template: `
         <div :class="{[getClass(styles, 'operations')]: true}">
-          <span :class="{[getClass(styles, 'item')]: true}" @click=""onMoveUp">上移</span>
+          <span :class="{[getClass(styles, 'item')]: true}" @click="onMoveUp">上移</span>
           <span :class="{[getClass(styles, 'item')]: true}" @click="onMoveDown">下移</span>
           <span :class="{[getClass(styles, 'item')]: true}" @click="onDelete">删除</span>
           <span :class="{[getClass(styles, 'item')]: true}" @click="onCopy">复制</span>
@@ -112,10 +108,11 @@ export function genCreateViewVue(styles?: Styles) {
           styles,
           getClass,
           node,
+          controller,
         }
       },
       template: (function() {
-        switch(type) {
+        switch(controller.type) {
           case 'array':
           case 'object': {
             return `
@@ -124,30 +121,29 @@ export function genCreateViewVue(styles?: Styles) {
                   :class="{
                     [getClass(styles, 'valueVisibleCtrl')]: true,
                     [getClass(styles, 'fold')]: !valueVisible,
-                  }"}
+                  }"
                   @click="() => node.valueVisible = !node.valueVisible"
                 >
                   {{'>'}}
                 </span>
                 <span>{{name}}</span>
-                <FieldOperations v-if="node.isArrayItem" />
+                <FieldOperations v-if="controller.isArrayItem" />
               </div>
-            )`
+            `
           }
           default:
         }
         return `
           <div :class="{[getClass(styles, 'fieldName')]: true}">
             {{name}}
-            <FieldOperations v-if="node.isArrayItem" />
+            <FieldOperations v-if="controller.isArrayItem" />
           </div>
         `
       })(),
     }
 
     const Value = (function() {
-      const value = controller.getValue();
-      switch(type) {
+      switch(controller.type) {
         case 'object': {
           return {
             props: ['valueVisible'],
@@ -195,7 +191,7 @@ export function genCreateViewVue(styles?: Styles) {
               >
                 <slot />
                 <div :class="{[getClass(styles, 'operations')]: true}">
-                  <button @lick="onAddItem">+ add item</button>
+                  <button @click="onAddItem">+ add item</button>
                 </div>
               </div>
             `
@@ -204,6 +200,7 @@ export function genCreateViewVue(styles?: Styles) {
         case 'string': {
           return {
             setup() {
+              const value = controller.getValue();
               const valueDisplay = ref(value);
               node.viewCtx.setValue = (value: string) => valueDisplay.value = value;
               const onInput = async (e) => {
@@ -235,10 +232,15 @@ export function genCreateViewVue(styles?: Styles) {
         case 'number': {
           return {
             setup() {
+              const value = controller.getValue();
               const valueDisplay = ref(value);
               node.viewCtx.setValue = (value: number) => valueDisplay.value = value;
               const onInput = async (e) => {
-                const valueCur = e.target?.value;
+                let valueCur = e.target?.value;
+                valueDisplay.value = valueCur;
+                if (valueCur.trim() !== '') {
+                  valueCur = Number(valueCur);
+                }
                 await node.onViewChange({
                   source: 'input',
                   value: valueCur,
@@ -255,7 +257,7 @@ export function genCreateViewVue(styles?: Styles) {
               <input
                 :class="{[getClass(styles, 'fieldValue')]: true}"
                 type="'text'"
-                v-model="valueDisplay"
+                :value="valueDisplay"
                 @input="onInput"
               />
             `,
@@ -265,6 +267,7 @@ export function genCreateViewVue(styles?: Styles) {
       }
       return {
         setup() {
+          const value = controller.getValue();
           const valueDisplay = ref(value);
           node.viewCtx.setValue = (value: any) => valueDisplay.value = value;
           return {
@@ -309,13 +312,15 @@ export function genCreateViewVue(styles?: Styles) {
         ErrorView,
       },
       setup() {
+        const comment = ref(controller.comment);
+
         const formatName = (name: string) => {
           if (controller.isArrayItem) {
             return `item-${name}`;
           }
           return name;
         }
-        const name = ref(formatName(fieldName));
+        const name = ref(formatName(controller.name));
         node.viewCtx.setName = (_name: string) => name.value = formatName(_name);
 
         const valueVisible = ref(node.valueVisible);
@@ -325,32 +330,32 @@ export function genCreateViewVue(styles?: Styles) {
         const message = ref(messageOrigin);
         node.viewCtx.setError = (_message?: string) => message.value = (_message || '');
 
-        const children = ref(node.children.map((c: FormNode) => c.viewCtx.view));
+        const children = shallowRef(node.children.map((c: FormNode) => c.viewCtx.view));
         node.viewCtx.syncChildren = () => {
           console.log('syncChildren');
-          const { children } = node;
-          children.value = children.map((c: FormNode) => c.viewCtx.view);
+          children.value = node.children.map((c: FormNode) => c.viewCtx.view);
         };
 
         return {
           styles,
           getClass,
+          comment,
           name,
           valueVisible,
-          messageOrigin,
+          message,
           children,
         }
       },
       template: `
         <Container>
-          <Comment />
+          <Comment :comment="comment" />
           <Label :valueVisible="valueVisible" :name="name" />
           <Value :valueVisible="valueVisible" >
             <template v-for="child in children" :key="child.__id__">
-              <child />
+              <component :is="child" />
             </template>
           </Value>
-          <ErrorView :message="message"/>
+          <ErrorView :message="message" />
         </Container>
       `
     }

@@ -20,10 +20,6 @@ export function genCreateViewSolid(styles?: Styles) {
       throw Error('missing controller');
     }
 
-    const {
-      name: fieldName, type, comment,
-    } = controller;
-
     const Container = (props: any) => {
       return (
         <div class={getClass(styles, 'formField')}>{props.children}</div>
@@ -32,7 +28,7 @@ export function genCreateViewSolid(styles?: Styles) {
 
     const Comment = (props: any) => {
       return (
-        <div class={getClass(styles, 'comment')}>{comment}</div>
+        <div class={getClass(styles, 'comment')}>{props.comment()}</div>
       )
     }
 
@@ -79,7 +75,7 @@ export function genCreateViewSolid(styles?: Styles) {
           </div>
         )
       }
-      switch(type) {
+      switch(controller.type) {
         case 'array':
         case 'object': {
           return (
@@ -111,7 +107,7 @@ export function genCreateViewSolid(styles?: Styles) {
     const Value = (props: any) => {
       const value = controller.getValue();
 
-      switch(type) {
+      switch(controller.type) {
         case 'object': {
           return (
             <div
@@ -256,7 +252,7 @@ export function genCreateViewSolid(styles?: Styles) {
     }
 
     const NodeView = (props: any) => {
-      const { node } = props;
+      const [comment, setComment] = createSignal(controller.comment);
 
       const formatName = (name: string) => {
         if (controller.isArrayItem) {
@@ -264,7 +260,7 @@ export function genCreateViewSolid(styles?: Styles) {
         }
         return name;
       }
-      const [name, setName] = createSignal(formatName(fieldName));
+      const [name, setName] = createSignal(formatName(controller.name));
       node.viewCtx.setName = (name: string) => setName(formatName(name));
 
       const [valueVisible, setValueVisible] = createSignal(node.valueVisible);
@@ -274,26 +270,20 @@ export function genCreateViewSolid(styles?: Styles) {
       const [message, setMessage] = createSignal(messageOrigin);
       node.viewCtx.setError = (message?: string) => setMessage(message || '');
 
-      const [children, setChildren] = createSignal(node.children);
+      const [children, setChildren] = createSignal(node.children.map((c: FormNode) => c.viewCtx.view));
       node.viewCtx.syncChildren = () => {
         console.log('syncChildren');
-        const { children } = node;
-        setChildren([...children]);
+        setChildren(node.children.map((c: FormNode) => c.viewCtx.view));
       };
 
       return (
         <Container>
-          <Comment />
+          <Comment comment={comment} />
           <Label valueVisible={valueVisible} name={name} />
           <Value valueVisible={valueVisible} >
             <For each={children()}>
               {
-                (n: FormNode) => {
-                  const {
-                    viewCtx: { view: NodeView }
-                  } = n;
-                  return <NodeView node={n} />
-                }
+                (ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />
               }
             </For>
           </Value>
@@ -301,6 +291,7 @@ export function genCreateViewSolid(styles?: Styles) {
         </Container>
       )
     }
+    NodeView.__id__ = controller.id;
 
     node.viewCtx.view = NodeView;
   }
@@ -315,6 +306,6 @@ export function genMountViewSolid(setFormRender?: Function) {
 
     const { viewCtx: { view: NodeView } } = rootNode;
 
-    setFormRender && setFormRender(() => (<NodeView node={rootNode} />));
+    setFormRender && setFormRender(NodeView);
   }
 }
