@@ -1,15 +1,15 @@
 <script setup lang="ts">
   import { onMounted, defineAsyncComponent } from 'vue';
-  import FormTest from './Form';
+  // import FormTest from './Form';
 
-  // import { Form } from 'form-cross-view-core';
-  // import { genCreateViewVue, genMountViewVue } from 'form-cross-view-vue';
-  // import 'form-cross-view-vue/dist/style.css';
+  import { Form } from 'form-cross-view-core';
+  import { genCreateViewVue, genMountViewVue } from 'form-cross-view-vue';
+  import 'form-cross-view-vue/dist/style.css';
 
-  let setRormRender: (form: any) => void;
-  const Form = defineAsyncComponent(() => {
+  let setFormRender: (form: any) => void;
+  const FormRender = defineAsyncComponent(() => {
     return new Promise((resolve) => {
-      setRormRender = resolve;
+      setFormRender = resolve;
     });
   });
 
@@ -88,34 +88,34 @@
       },
     }
 
-    // const updateForm = async (descriptor: any, value?: any) => {
-    //   const formDiv = document.getElementById('form');
-    //   if (!formDiv) {
-    //     throw Error('missing formDiv');
-    //   }
-    //   formDiv.innerHTML = '';
+    const updateForm = async (descriptor: any, value?: any) => {
+      const formDiv = document.getElementById('form');
+      if (!formDiv) {
+        throw Error('missing formDiv');
+      }
+      formDiv.innerHTML = '';
 
-    //   const formInstance = new Form(
-    //     formDiv,
-    //     descriptor,
-    //     {
-    //       createView: genCreateViewVue(),
-    //       mountView: genMountViewVue(setFormRender),
-    //     }
-    //   );
+      const formInstance = new Form(
+        formDiv,
+        descriptor,
+        {
+          createView: genCreateViewVue(),
+          mountView: genMountViewVue(setFormRender),
+        }
+      );
 
-    //   console.log(formInstance);
-    // }
+      console.log(formInstance);
+    }
 
-    // updateForm(descriptor);
+    updateForm(descriptor);
 
-    setRormRender(FormTest);
+    // setFormRender(FormTest);
   });
 </script>
 
 <template>
     <div className='formContainer'>
-      <div id='form'><Form /></div>
+      <div id='form'><FormRender /></div>
     </div>
 </template>
 
