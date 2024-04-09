@@ -108,20 +108,11 @@
 </script>
 
 <template>
-    <div className='formContainer'>
-      <div id='form'>
-        <component :is="formRender" />
-      </div>
+    <div id='form'>
+      <component :is="formRender" />
     </div>
 </template>
 
 <style scoped>
-  .formContainer {
-    width: 600px;
-    height: 650px;
-    border-radius: 12px;
-    background: #000;
-    user-select: none;
-    overflow-y: auto;
-  }
+
 </style>

@@ -107,9 +107,7 @@ function App() {
 
   return (
     <>
-      <div class='formContainer'>
-        <div id='form'>{formRender()}</div>
-      </div>
+      <div id='form'>{formRender()}</div>
     </>
   )
 }

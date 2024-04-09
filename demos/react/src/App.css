@@ -1,8 +1,0 @@
-.formContainer {
-  width: 600px;
-  height: 650px;
-  border-radius: 12px;
-  background: #000;
-  user-select: none;
-  overflow-y: auto;
-}

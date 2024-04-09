@@ -4,21 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NativeView</title>
-  <style>
-    .formContainer {
-      width: 600px;
-      height: 650px;
-      border-radius: 12px;
-      background: #000;
-      user-select: none;
-      overflow-y: auto;
-    }
-  </style>
 </head>
 <body>
-  <div class='formContainer'>
-    <div id='form'></div>
-  </div>
+  <div id='form'></div>
   <script type="module">
     import { Form } from 'form-cross-view-core';
     import { genCreateViewNative, genMountViewNative } from 'form-cross-view-native';
