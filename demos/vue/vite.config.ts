@@ -14,10 +14,6 @@ export default defineConfig((env: ConfigEnv) => {
     pkgsHmr.forEach((p: string) => {
       alias.push(
         {
-          find: `${p}/dist/style.css`,
-          replacement: path.resolve(__dirname, `../../packages/${p}/index.module.scss`),
-        },
-        {
           find: p,
           replacement: path.resolve(__dirname, `../../packages/${p}/index`),
         },

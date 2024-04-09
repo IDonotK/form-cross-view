@@ -35,6 +35,9 @@ importers:
       vite:
         specifier: ^5.2.0
         version: 5.2.0(@types/node@20.11.30)(sass@1.72.0)
+      vite-plugin-libcss:
+        specifier: ^1.1.1
+        version: 1.1.1(vite@5.2.0)
       vite-plugin-solid:
         specifier: ^2.10.2
         version: 2.10.2(solid-js@1.8.16)(vite@5.2.0)
@@ -1778,6 +1781,15 @@ packages:
 
   /validate-html-nesting@1.2.2:
     resolution: {integrity: sha512-hGdgQozCsQJMyfK5urgFcWEqsSSrK63Awe0t/IMR0bZ0QMtnuaiHzThW81guu3qx9abLi99NEuiaN6P9gVYsNg==}
+    dev: true
+
+  /vite-plugin-libcss@1.1.1(vite@5.2.0):
+    resolution: {integrity: sha512-WAk6U9iYWMbcu7cdw4wACpVebZiLHMyyE9KTcBzzkTt1cnXj3a7loIoIGNblx+xMb9quPpO3iRbNTOnIFDzgmg==}
+    peerDependencies:
+      vite: '*'
+    dependencies:
+      minimatch: 9.0.4
+      vite: 5.2.0(@types/node@20.11.30)(sass@1.72.0)
     dev: true
 
   /vite-plugin-solid@2.10.2(solid-js@1.8.16)(vite@5.2.0):

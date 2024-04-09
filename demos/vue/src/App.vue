@@ -4,8 +4,6 @@
 
   import { Form } from 'form-cross-view-core';
   import { genCreateViewVue, genMountViewVue } from 'form-cross-view-vue';
-  import 'form-cross-view-vue/dist/style.css';
-
 
   const formRender = shallowRef(null);
   const setFormRender = (val) => {

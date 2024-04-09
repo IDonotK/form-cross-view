@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import libCss from 'vite-plugin-libcss';
 import * as path from 'path';
 
 export default defineConfig({
@@ -14,6 +15,10 @@ export default defineConfig({
       external: ['react', 'react-dom'],
     },
     minify: true,
+    cssCodeSplit: true,
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    libCss()
+  ],
 })

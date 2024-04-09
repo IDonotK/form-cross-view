@@ -2,7 +2,6 @@ import { createSignal, onMount } from 'solid-js';
 
 import { Form } from 'form-cross-view-core';
 import { genCreateViewSolid, genMountViewSolid } from 'form-cross-view-solid';
-import 'form-cross-view-solid/dist/style.css';
 
 import './App.css';
 

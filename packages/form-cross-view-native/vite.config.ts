@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import libCss from 'vite-plugin-libcss';
 import * as path from 'path';
 
 export default defineConfig({
@@ -10,5 +11,9 @@ export default defineConfig({
       fileName: 'index',
     },
     minify: true,
-  }
+    cssCodeSplit: true,
+  },
+  plugins: [
+    libCss()
+  ],
 })
