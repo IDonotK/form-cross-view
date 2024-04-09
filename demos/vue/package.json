@@ -8,8 +8,8 @@
     "prd": "vite --force --mode prd"
   },
   "dependencies": {
-    "form-cross-view-core": "workspace:*",
-    "form-cross-view-vue": "workspace:*",
+    "@form-cross-view/core": "workspace:*",
+    "@form-cross-view/vue-view": "workspace:*",
     "vue": "^3.4.21"
   }
 }

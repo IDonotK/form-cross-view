@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "form-cross-view-core": "workspace:*",
-    "form-cross-view-native": "workspace:*"
+    "@form-cross-view/core": "workspace:*",
+    "@form-cross-view/native-view": "workspace:*"
   }
 }

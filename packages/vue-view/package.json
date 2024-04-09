@@ -1,5 +1,5 @@
 {
-  "name": "form-cross-view-vue",
+  "name": "@form-cross-view/vue-view",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.mjs",
@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "form-cross-view-core": "workspace:*",
+    "@form-cross-view/core": "workspace:*",
     "vue": "^3.4.21"
   },
   "peerDependencies": {
-    "form-cross-view-core": "workspace:*",
+    "@form-cross-view/core": "workspace:*",
     "vue": "^3.4.21"
   }
 }

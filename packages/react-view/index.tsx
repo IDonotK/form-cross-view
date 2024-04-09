@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import classnames from 'classnames';
-import { Form, FormField } from 'form-cross-view-core';
+import { Form, FormField } from '@form-cross-view/core';
 
 import stylesDefault from './index.module.scss';
 

@@ -2,8 +2,8 @@
   import { shallowRef, onMounted } from 'vue';
   // import FormTest from './Form';
 
-  import { Form } from 'form-cross-view-core';
-  import { genCreateViewVue, genMountViewVue } from 'form-cross-view-vue';
+  import { Form } from '@form-cross-view/core';
+  import { genCreateViewVue, genMountViewVue } from '@form-cross-view/vue-view';
 
   const formRender = shallowRef(null);
   const setFormRender = (val) => {

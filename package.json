@@ -5,18 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --filter ./packages/** run build",
-    
-    "build:core": "pnpm --filter=form-cross-view-core run build",
-    "build:native": "pnpm --filter=form-cross-view-native run build",
-    "build:solid": "pnpm --filter=form-cross-view-solid run build",
-    "build:react": "pnpm --filter=form-cross-view-react run build",
-    "build:vue": "pnpm --filter=form-cross-view-vue run build",
-  
+    "build:core": "pnpm --filter=core run build",
+    "build:native": "pnpm --filter=view-native run build",
+    "build:solid": "pnpm --filter=view-solid run build",
+    "build:react": "pnpm --filter=view-react run build",
+    "build:vue": "pnpm --filter=view-vue run build",
     "demo:dev:native": "pnpm --filter=native run dev",
     "demo:dev:solid": "pnpm --filter=solid run dev",
     "demo:dev:react": "pnpm --filter=react run dev",
     "demo:dev:vue": "pnpm --filter=vue run dev",
-  
     "demo:prd:native": "pnpm --filter=native run prd",
     "demo:prd:solid": "pnpm --filter=solid run prd",
     "demo:prd:react": "pnpm --filter=react run prd",
@@ -33,17 +30,17 @@
   },
   "homepage": "https://github.com/IDonotK/form-cross-view#readme",
   "devDependencies": {
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.6",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "rimraf": "^5.0.5",
-    "rollup": "^4.13.2",
+    "rollup": "^4.14.1",
     "rollup-plugin-typescript2": "^0.36.0",
-    "sass": "^1.72.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "sass": "^1.74.1",
+    "typescript": "^5.4.4",
+    "vite": "^5.2.8",
     "vite-plugin-libcss": "^1.1.1",
     "vite-plugin-solid": "^2.10.2",
-    "vue-tsc": "^2.0.6"
+    "vue-tsc": "^2.0.11"
   }
 }

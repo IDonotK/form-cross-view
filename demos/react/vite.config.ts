@@ -8,8 +8,8 @@ export default defineConfig((env: ConfigEnv) => {
   const alias: Alias[] = [];
   if (mode === 'dev') {
     const pkgsHmr = [
-      'form-cross-view-core',
-      'form-cross-view-react',
+      '/@form-cross-view/core/',
+      '/@form-cross-view/react-view/',
     ];
     pkgsHmr.forEach((p: string) => {
       alias.push(

@@ -1,4 +1,4 @@
-import { Form, FormField } from 'form-cross-view-core';
+import { Form, FormField } from '@form-cross-view/core';
 
 import stylesDefault from './index.module.scss';
 

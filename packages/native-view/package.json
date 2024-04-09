@@ -1,8 +1,8 @@
 {
-  "name": "form-cross-view-native",
+  "name": "@form-cross-view/native-view",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.mjs",
   "scripts": {
     "build": "rimraf -rf dist && vite build"
   },
@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "form-cross-view-core": "workspace:*"
+    "@form-cross-view/core": "workspace:*"
   },
   "peerDependencies": {
-    "form-cross-view-core": "workspace:*"
+    "@form-cross-view/core": "workspace:*"
   }
 }

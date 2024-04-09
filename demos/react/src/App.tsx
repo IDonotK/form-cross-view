@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { Form } from 'form-cross-view-core';
-import { genCreateViewReact, genMountViewReact } from 'form-cross-view-react';
+import { Form } from '@form-cross-view/core';
+import { genCreateViewReact, genMountViewReact } from '@form-cross-view/react-view';
 
 import './App.css';
 

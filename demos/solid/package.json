@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "form-cross-view-core": "workspace:*",
-    "form-cross-view-solid": "workspace:*",
+    "@form-cross-view/core": "workspace:*",
+    "@form-cross-view/solid-view": "workspace:*",
     "solid-js": "^1.8.16"
   }
 }

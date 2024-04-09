@@ -1,5 +1,5 @@
 {
-  "name": "form-cross-view-solid",
+  "name": "@form-cross-view/solid-view",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.mjs",
@@ -11,10 +11,10 @@
   "license": "ISC",
   "devDependencies": {
     "solid-js": "^1.8.16",
-    "form-cross-view-core": "workspace:*"
+    "@form-cross-view/core": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": "^1.8.16",
-    "form-cross-view-core": "workspace:*"
+    "@form-cross-view/core": "workspace:*"
   }
 }
