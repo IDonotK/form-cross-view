@@ -142,7 +142,7 @@ export class FormField {
 
     const formFieldChild = this.newChild(descriptorCompiledChild);
     
-    //TODO: delay to setValue after mount?
+    // TODO: delay to setValue after mount?
     formFieldChild.setValue(field.getValue());
 
     return formFieldChild;
@@ -388,7 +388,7 @@ export class FormField {
         } else {
           const formFieldChild = this.createChild();
 
-          //TODO: delay to setValue after mount?
+          // TODO: delay to setValue after mount?
           formFieldChild.setValue(valueNew[i]);
           
           formFieldChild._orderInit = i;

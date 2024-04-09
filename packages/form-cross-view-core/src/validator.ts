@@ -154,7 +154,7 @@ function getDefaultValue(type: string) {
 }
 
 function validateDescriptor(descriptor: Descriptor | Descriptor[] | null) {
-  // @todo
+  // TODO:
 }
 
 /**
@@ -183,7 +183,7 @@ function validateDescriptor(descriptor: Descriptor | Descriptor[] | null) {
  * @param descriptor
  * @param fieldName
  */
-function validateArrayDescriptor(descriptor: Descriptor, fieldName: string) { // @todo: test?
+function validateArrayDescriptor(descriptor: Descriptor, fieldName: string) {
   const throwError = (detail: string) => { throw Error(`${fieldName}: ${detail}`); }
 
   const {

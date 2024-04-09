@@ -223,12 +223,12 @@ export function genCreateViewReact(styles?: Styles) {
         <Container>
           <Comment comment={comment} />
           <Label valueVisible={valueVisible} name={name} />
-          <Value valueVisible={valueVisible} >
+          <Value valueVisible={valueVisible}>
             {
               children.map((ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />)
             }
           </Value>
-          <ErrorView message={message}/>
+          <ErrorView message={message} />
         </Container>
       )
     }

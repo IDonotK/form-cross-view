@@ -275,14 +275,14 @@ export function genCreateViewSolid(styles?: Styles) {
         <Container>
           <Comment comment={comment} />
           <Label valueVisible={valueVisible} name={name} />
-          <Value valueVisible={valueVisible} >
+          <Value valueVisible={valueVisible}>
             <For each={children()}>
               {
                 (ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />
               }
             </For>
           </Value>
-          <ErrorView message={message}/>
+          <ErrorView message={message} />
         </Container>
       )
     }

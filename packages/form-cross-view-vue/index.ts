@@ -344,7 +344,7 @@ export function genCreateViewVue(styles?: Styles) {
         <Container>
           <Comment :comment="comment" />
           <Label :valueVisible="valueVisible" :name="name" />
-          <Value :valueVisible="valueVisible" >
+          <Value :valueVisible="valueVisible">
             <template v-for="child in children" :key="child.__id__">
               <component :is="child" />
             </template>
