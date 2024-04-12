@@ -8,13 +8,13 @@ export default defineConfig((env: ConfigEnv) => {
   const alias: Alias[] = [];
   if (mode === 'dev') {
     const pkgsHmr = [
-      '/@form-cross-view/core/',
-      '/@form-cross-view/solid-view/',
+      'core',
+      'solid-view',
     ];
     pkgsHmr.forEach((p: string) => {
       alias.push(
         {
-          find: p,
+          find: `@form-cross-view/${p}`,
           replacement: path.resolve(__dirname, `../../packages/${p}/index`),
         },
       );

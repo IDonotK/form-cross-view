@@ -42,6 +42,9 @@ export class Form {
     if (!descriptor) {
       throw Error('missing descriptor');
     }
+    if (typeof descriptor !== 'object') {
+      throw Error('descriptor must be object in type');
+    }
 
     this.container = container;
 
@@ -65,7 +68,7 @@ export class Form {
   private _create(descriptor: Descriptor) {
     const descriptorCompiled = compileDescriptor(
       descriptor,
-      'settings'
+      ''
     );
 
     // console.log('descriptorCompiled', descriptorCompiled);

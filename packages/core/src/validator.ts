@@ -410,11 +410,13 @@ function compileDescriptor(
   fieldName: string,
   owner?: DescriptorCompiled,
 ): DescriptorCompiled | undefined {
-  const { type, editable = editableDefault } = descriptor;
+  const { type, editable = editableDefault, name } = descriptor;
 
   if (!editable) {
     return;
   }
+
+  fieldName = name ?? fieldName;
 
   const descriptorOrigin = descriptor; // cloneDeep?
 

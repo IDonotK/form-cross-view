@@ -24,6 +24,7 @@ function App() {
           defaultValue: 'hello',
           comment: 'a 的注释',
           editable: true,
+          name: '哈哈',
         },
         b: {
           type: 'number',

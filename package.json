@@ -30,17 +30,17 @@
   },
   "homepage": "https://github.com/IDonotK/form-cross-view#readme",
   "devDependencies": {
-    "@types/node": "^20.12.6",
+    "@types/node": "^20.12.7",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "rimraf": "^5.0.5",
-    "rollup": "^4.14.1",
+    "rollup": "^4.14.2",
     "rollup-plugin-typescript2": "^0.36.0",
-    "sass": "^1.74.1",
-    "typescript": "^5.4.4",
+    "sass": "^1.75.0",
+    "typescript": "^5.4.5",
     "vite": "^5.2.8",
     "vite-plugin-libcss": "^1.1.1",
     "vite-plugin-solid": "^2.10.2",
-    "vue-tsc": "^2.0.11"
+    "vue-tsc": "^2.0.13"
   }
 }

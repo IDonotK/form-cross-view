@@ -13,6 +13,7 @@ function App() {
       type: 'object',
       required: true,
       editable: true,
+      name: 'test',
       comment: `
   1.小车装有超声波传感器，可检测到前方的石头；
   2.请补充小车的控制逻辑，将石头移出圆形区域。
