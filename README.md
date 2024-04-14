@@ -1,7 +1,7 @@
 <p align="center">
-    <a href="https://github.com/IDonotK/form-cross-view">
-        <img width="100" src="./logo.png">
-    </a>
+  <a href="https://github.com/IDonotK/form-cross-view">
+    <img width="200" src="./logo.svg">
+  </a>
 </p>
 
 <h1 align= "center">
