@@ -1,7 +1,7 @@
 import Schema, {
   RuleItem, Rules, ValidateError
 } from 'async-validator';
-import { clone } from 'lodash';
+import { clone } from 'lodash-es';
 
 export interface Descriptor extends RuleItem {
   fields?: Record<string, Descriptor | Descriptor[]>;

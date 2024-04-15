@@ -23,8 +23,9 @@
   "author": "AlphaLu",
   "license": "MIT",
   "devDependencies": {
-    "@types/lodash": "^4.17.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/lodash-es": "^4.17.12",
     "async-validator": "^4.2.5",
-    "lodash": "^4.17.21"
+    "lodash-es": "^4.17.21"
   }
 }
