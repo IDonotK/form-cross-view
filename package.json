@@ -10,14 +10,14 @@
     "build:solid": "pnpm --filter=view-solid run build",
     "build:react": "pnpm --filter=view-react run build",
     "build:vue": "pnpm --filter=view-vue run build",
-    "demo:dev:native": "pnpm --filter=native run dev",
-    "demo:dev:solid": "pnpm --filter=solid run dev",
-    "demo:dev:react": "pnpm --filter=react run dev",
-    "demo:dev:vue": "pnpm --filter=vue run dev",
-    "demo:prd:native": "pnpm --filter=native run prd",
-    "demo:prd:solid": "pnpm --filter=solid run prd",
-    "demo:prd:react": "pnpm --filter=react run prd",
-    "demo:prd:vue": "pnpm --filter=vue run prd"
+    "demo:dev:native": "pnpm --filter=native-demo run dev",
+    "demo:dev:solid": "pnpm --filter=solid-demo run dev",
+    "demo:dev:react": "pnpm --filter=react-demo run dev",
+    "demo:dev:vue": "pnpm --filter=vue-demo run dev",
+    "demo:prd:native": "pnpm --filter=native-demo run prd",
+    "demo:prd:solid": "pnpm --filter=solid-demo run prd",
+    "demo:prd:react": "pnpm --filter=react-demo run prd",
+    "demo:prd:vue": "pnpm --filter=vue-demo run prd"
   },
   "repository": {
     "type": "git",

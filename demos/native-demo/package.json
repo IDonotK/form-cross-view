@@ -1,15 +1,17 @@
 {
-  "name": "vue",
-  "private": true,
-  "version": "0.0.0",
+  "name": "native-demo",
+  "version": "0.0.1",
+  "description": "",
   "type": "module",
   "scripts": {
     "dev": "vite --force --mode dev",
     "prd": "vite --force --mode prd"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@form-cross-view/core": "workspace:*",
-    "@form-cross-view/vue-view": "workspace:*",
-    "vue": "^3.4.21"
+    "@form-cross-view/native-view": "workspace:*"
   }
 }

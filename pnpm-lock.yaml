@@ -48,7 +48,7 @@ importers:
         specifier: ^2.0.13
         version: 2.0.13(typescript@5.4.5)
 
-  demos/native:
+  demos/native-demo:
     dependencies:
       '@form-cross-view/core':
         specifier: workspace:*
@@ -57,7 +57,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/native-view
 
-  demos/react:
+  demos/react-demo:
     dependencies:
       '@form-cross-view/core':
         specifier: workspace:*
@@ -79,7 +79,7 @@ importers:
         specifier: ^18.2.22
         version: 18.2.24
 
-  demos/solid:
+  demos/solid-demo:
     dependencies:
       '@form-cross-view/core':
         specifier: workspace:*
@@ -91,7 +91,7 @@ importers:
         specifier: ^1.8.16
         version: 1.8.16
 
-  demos/vue:
+  demos/vue-demo:
     dependencies:
       '@form-cross-view/core':
         specifier: workspace:*
