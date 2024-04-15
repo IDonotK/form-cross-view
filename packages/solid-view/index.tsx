@@ -3,7 +3,9 @@ import { Form, FormField } from '@form-cross-view/core';
 
 import stylesDefault from './index.module.scss';
 
-export type Styles = { [k: string]: any }
+interface Styles { [k: string]: any }
+
+interface Props { [ k: string]: any }
 
 export function genCreateViewSolid(styles?: Styles) {
   if (!styles) {
@@ -15,19 +17,19 @@ export function genCreateViewSolid(styles?: Styles) {
   }
 
   return function createViewSolid(controller: FormField) {
-    const Container = (props: any) => {
+    const Container = (props: Props) => {
       return (
         <div class={getClass(styles, 'formField')}>{props.children}</div>
       )
     }
 
-    const Comment = (props: any) => {
+    const Comment = (props: Props) => {
       return (
         <div class={getClass(styles, 'comment')}>{props.comment()}</div>
       )
     }
 
-    const Label = (props: any) => {
+    const Label = (props: Props) => {
       const FieldOperations = () => {
         if (!controller.isArrayItem) {
           return (<></>);
@@ -99,7 +101,7 @@ export function genCreateViewSolid(styles?: Styles) {
       )
     }
 
-    const Value = (props: any) => {
+    const Value = (props: Props) => {
       const value = controller.getValue();
 
       switch(controller.type) {
@@ -233,7 +235,7 @@ export function genCreateViewSolid(styles?: Styles) {
       )
     }
 
-    const ErrorView = (props: any) => {
+    const ErrorView = (props: Props) => {
       return (
         <div
           classList={{

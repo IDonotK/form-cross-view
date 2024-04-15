@@ -34,7 +34,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "rimraf": "^5.0.5",
-    "rollup": "^4.14.2",
+    "rollup": "^4.14.3",
     "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.75.0",
     "typescript": "^5.4.5",

@@ -2,7 +2,7 @@ import { Form, FormField } from '@form-cross-view/core';
 
 import stylesDefault from './index.module.scss';
 
-export type Styles = { [k: string]: any }
+interface Styles { [k: string]: any }
 
 export function genCreateViewNative(styles?: Styles) {
   if (!styles) {

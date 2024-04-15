@@ -45,7 +45,7 @@ Schema.register('positiveInteger', (rule: any, value: any) => {
       new Error(`${rule.fullField} 需要在 ${rule.min} 到 ${rule.max} 之间`)
     );
   }
-  return pass || new Error(`${rule.fullField} is not a positive integer.`);
+  return pass || new Error(`${rule.fullField} is not a positive integer`);
 });
 
 const defaultMessages: { [k: string]: any } = {

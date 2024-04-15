@@ -1,6 +1,6 @@
 import { createSignal, onMount } from 'solid-js';
 
-import { Form } from '@form-cross-view/core';
+import { Form, FormField } from '@form-cross-view/core';
 import { genCreateViewSolid, genMountViewSolid } from '@form-cross-view/solid-view';
 
 import styles from './App.module.scss';
@@ -47,6 +47,15 @@ function App() {
           required: true,
           defaultValue: 3.1,
           editable: true,
+          asyncValidator: (rule, value) => {
+            return new Promise((resolve, reject) => {
+              if (value > 18) {
+                reject(`${rule.fullField} is too large`);
+              } else {
+                resolve();
+              }
+            });
+          },
         },
         e: {
           type: 'boolean',
@@ -60,6 +69,28 @@ function App() {
           enum: ['admin', 'user', 'guest'],
           defaultValue: 'admin',
           editable: true,
+        },
+        g: {
+          type: 'number',
+          editable: true,
+          required: true,
+          defaultValue: 9,
+          extendRules: [
+            { type: 'positiveInteger' },
+            (rule, value) => {
+              const pass = value > 5;
+              return pass || new Error(`${rule.fullField} is too small`);
+            },
+            async (rule, value) => {
+              return new Promise((resolve, reject) => {
+                if (value > 10) {
+                  reject(`${rule.fullField} is too large`);
+                } else {
+                  resolve();
+                }
+              });
+            },
+          ],
         },
         vertices: {
           type: 'array',
@@ -100,6 +131,37 @@ function App() {
       {
         createView: genCreateViewSolid(),
         mountView: genMountViewSolid(setFormRender),
+      }
+    );
+
+    if (value) {
+      formInstance.setValue(value);
+    }
+
+    formInstance.on(
+      'valuechange',
+      async (valueNew: any, valueOld: any, field: FormField) => {
+        console.log('valueNew', valueNew);
+        console.log('valueOld', valueOld);
+        console.log('changed field', field);
+
+        if (formInstance.isDirty()) {
+          console.log('The form is dirty.');
+        } else {
+          console.log('The form is clean.');
+        }
+
+        if (formInstance.isValid()) {
+          console.log('The form is valid.');
+        } else {
+          console.log('The form is unvalid.');
+        }
+        
+        const error = await formInstance.validate();
+        console.log('form error', error);
+
+        const value = formInstance.getValue();
+        console.log('form value', value);
       }
     );
 

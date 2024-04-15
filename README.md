@@ -9,7 +9,7 @@
 </h1>
 
 <p align="center">
-  <a href="?">
+  <a href="https://github.com/IDonotK/form-cross-view/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square">
   </a>
   <a href="https://github.com/IDonotK/form-cross-view/issues">
@@ -26,7 +26,9 @@
 另外，form-cross-view 内置了一些视图组件，可开箱即用，同时作为自定义视图的参考范例，包括原生 DOM、React、Solid、Vue。</strong>
 
 ## 演示
-<img style="max-width: 800px" src="./demo.gif">
+- 实现详见 [demos/solid](https://github.com/IDonotK/form-cross-view/blob/main/demos/solid/src/App.tsx)
+
+<img style="max-width: 500px" src="./demo.gif">
 
 ## 目录
 - [演示](#演示)
@@ -37,13 +39,13 @@
   - [使用内置视图组件](#使用内置视图组件)
 - [贡献](#贡献)
   - [开发指南](#开发指南)
-- [待办项](#待办项)
+- [TODOS](#TODOS)
 - [作者](#作者)
 - [版权说明](#版权说明)
 
 ### 功能
 - 基于并扩展 [async-validator](https://github.com/yiminghe/async-validator) 数据描述规范
-  - 扩展字段描述：defaultValue、comment、editable、extendRules ...
+  - 扩展字段描述：defaultValue、comment、editable、extendRules、name、unit ...
   - 扩展字段类型：正整数 ...
 - 丰富的表单操作
   - 基本逻辑：嵌套结构、动态渲染、数据收集、数据验证、监听变化 ...
@@ -70,150 +72,219 @@ npm i -S @form-cross-view/core
 ```
 ##### 步骤二
 实现 createViewReact 函数，用于生成每种字段的视图组件，示例为简单起见，只针对 2 种字段类型，分别是对象和字符串
+- 关键是理解并实现 ViewCtx 上的接口
+```ts
+// import { ViewCtx } from '@form-cross-view/core';
+
+export interface ViewCtx {
+  syncChildren?: () => void; // 用于同步 controller children 到视图节点 children
+  setValue?: (value: any) => void; // 用于设置显示的字段值
+  setName?: (name: string) => void; // 用于设置显示的字段名
+  setValueVisible?: (visible: boolean) => void; // 用于控制值是否显示（仅对对象、数组字段生效）
+  setError?: (message?: string) => void; // 用于设置显示的字段错误
+  [k: string]: any;
+}
+```
 ```tsx
 import { FormField } from '@form-cross-view/core';
+import classnames from 'classnames';
+
+import styles from './index.module.scss';
+
+interface Props { [ k: string]: any }
 
 function createViewReact(controller: FormField) {
-    // 字段容器组件
-    const Container = (props: any) => {
-      return (
-        <div className='formField'>{props.children}</div>
-      )
-    }
-    
-    // 字段注释组件
-    const Comment = (props: any) => {
-      return (
-        <div className='comment'>{props.comment}</div>
-      )
-    }
-    
-    // 字段名组件
-    const Label = (props: any) => {
-      switch(controller.type) {
-        case 'object': {
-          return (
-            <div className='fieldName'>
-              <span
-                className={classnames({
-                  ['valueVisibleCtrl']: true,
-                  ['fold']: !props.valueVisible,
-                })}
-                onClick={() => controller.valueVisible = !controller.valueVisible }
-              >
-                {'>'}
-              </span>
-              <span>{props.name}</span>
-            </div>
-          )
-        }
-        default:
-      }
-      return (
-        <div className='fieldName'>
-          {props.name}
-        </div>
-      )
-    }
-    
-    // 字段值组件
-    const Value = (props: any) => {
-      const value = controller.getValue();
-      switch(controller.type) {
-        case 'object': {
-          return (
-            <div
-              className={classnames({
-                ['fieldValue']: true,
-                ['fold']: !props.valueVisible,
-              })}
-            >
-              {props.children}
-            </div>
-          )
-        }
-        case 'string': {
-          const [valueDisplay, setValueDisplay] = useState(value);
-          
-          // 这里实现 controller.viewCtx.setValue 接口，也就是从 Model => View
-          controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
-          
-          const onInput = async (e) => {
-            const valueCur = String(e.target?.value);
-            setValueDisplay(valueCur);
-            
-            // 这里调用 controller.onValueChange，也就是从 View => Model
-            await controller.onValueChange({
-              source: 'input',
-              value: valueCur,
-            });
-          }
-          return (
-            <input className='fieldValue' type={'text'} value={valueDisplay} onInput={onInput} />
-          )
-        }
-        default:
-      }
-      const [valueDisplay, setValueDisplay] = useState(value);
-      controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
-      return (
-        <div className='fieldValue'>{valueDisplay}</div>
-      )
-    }
-    
-    // 错误信息组件
-    const ErrorView = (props: any) => {
-      return (
-        <div
-          className={classnames({
-            ['error']: true,
-            ['hidden']: !props.message,
-          })}
-        >
-          {props.message}
-        </div>
-      )
-    }
-    
-    // 将上述组件组合起来
-    const NodeView = () => {      
-      const [comment, setComment] = useState(controller.comment);
-      
-      const [name, setName] = useState(controller.name);
-      // 这里实现 controller.viewCtx.setName 接口
-      controller.viewCtx.setName = (name: string) => setName(name);
-
-      const [valueVisible, setValueVisible] = useState(controller.valueVisible);
-      // 这里实现 controller.viewCtx.setValueVisible 接口
-      controller.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
-
-      const messageOrigin = controller.error?.map(e => e.message).join(';\n');
-      const [message, setMessage] = useState(messageOrigin);
-      // 这里实现 controller.viewCtx.setError 接口
-      controller.viewCtx.setError = (message?: string) => setMessage(message || '');
-
-      const [children, setChildren] = useState(controller.children.map((c: FormField) => c.viewCtx.view));
-      // 这里实现 controller.viewCtx.syncChildren 接口
-      controller.viewCtx.syncChildren = () => {
-        setChildren(controller.children.map((c: FormField) => c.viewCtx.view));
-      };
+  // 字段容器组件
+  const Container = (props: Props) => {
+    return (
+      <div className={styles.formField}>{props.children}</div>
+    )
+  }
   
-      return (
-        <Container>
-          <Comment comment={comment} />
-          <Label valueVisible={valueVisible} name={name} />
-          <Value valueVisible={valueVisible}>
-            {
-              children.map((ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />)
-            }
-          </Value>
-          <ErrorView message={message} />
-        </Container>
-      )
+  // 字段注释组件
+  const Comment = (props: Props) => {
+    return (
+      <div className={styles.comment}>{props.comment}</div>
+    )
+  }
+    
+  // 字段名组件
+  const Label = (props: Props) => {
+    switch(controller.type) {
+      case 'object': {
+        return (
+          <div className={styles.fieldName}>
+            <span
+              className={classnames({
+                [styles.valueVisibleCtrl]: true,
+                [styles.fold]: !props.valueVisible,
+              })}
+              onClick={() => controller.valueVisible = !controller.valueVisible }
+            >
+              {'>'}
+            </span>
+            <span>{props.name}</span>
+          </div>
+        )
+      }
+      default:
     }
-    NodeView.__id__ = controller.id;
+    return (
+      <div className={styles.fieldName}>
+        {props.name}
+      </div>
+    )
+  }
+    
+  // 字段值组件
+  const Value = (props: Props) => {
+    const value = controller.getValue();
+    switch(controller.type) {
+      case 'object': {
+        return (
+          <div
+            className={classnames({
+              [styles.fieldValue]: true,
+              [styles.fold]: !props.valueVisible,
+            })}
+          >
+            {props.children}
+          </div>
+        )
+      }
+      case 'string': {
+        const [valueDisplay, setValueDisplay] = useState(value);
+        
+        // 这里实现 controller.viewCtx.setValue 接口，也就是从 Model => View
+        controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
+        
+        const onInput = async (e) => {
+          const valueCur = String(e.target?.value);
+          setValueDisplay(valueCur);
+          
+          // 这里调用 controller.onValueChange，也就是从 View => Model
+          await controller.onValueChange({
+            source: 'input',
+            value: valueCur,
+          });
+        }
+        return (
+          <input className={styles.fieldValue} type={'text'} value={valueDisplay} onInput={onInput} />
+        )
+      }
+      default:
+    }
+    const [valueDisplay, setValueDisplay] = useState(value);
+    controller.viewCtx.setValue = (value: string) => setValueDisplay(value);
+    return (
+      <div className={styles.fieldValue}>{valueDisplay}</div>
+    )
+  }
+  
+  // 错误信息组件
+  const ErrorView = (props: Props) => {
+    return (
+      <div
+        className={classnames({
+          [styles.error]: true,
+          [styles.hidden]: !props.message,
+        })}
+      >
+        {props.message}
+      </div>
+    )
+  }
+  
+  // 将上述组件组合起来
+  const NodeView = () => {      
+    const [comment, setComment] = useState(controller.comment);
+    
+    const [name, setName] = useState(controller.name);
+    // 这里实现 controller.viewCtx.setName 接口
+    controller.viewCtx.setName = (name: string) => setName(name);
 
-    controller.viewCtx.view = NodeView;
+    const [valueVisible, setValueVisible] = useState(controller.valueVisible);
+    // 这里实现 controller.viewCtx.setValueVisible 接口
+    controller.viewCtx.setValueVisible = (visible: boolean) => setValueVisible(visible);
+
+    const messageOrigin = controller.error?.map(e => e.message).join(';\n');
+    const [message, setMessage] = useState(messageOrigin);
+    // 这里实现 controller.viewCtx.setError 接口
+    controller.viewCtx.setError = (message?: string) => setMessage(message || '');
+
+    const [children, setChildren] = useState(controller.children.map((c: FormField) => c.viewCtx.view));
+    // 这里实现 controller.viewCtx.syncChildren 接口
+    controller.viewCtx.syncChildren = () => {
+      setChildren(controller.children.map((c: FormField) => c.viewCtx.view));
+    };
+
+    return (
+      <Container>
+        <Comment comment={comment} />
+        <Label valueVisible={valueVisible} name={name} />
+        <Value valueVisible={valueVisible}>
+          {
+            children.map((ChildNodeView) => <ChildNodeView key={ChildNodeView.__id__} />)
+          }
+        </Value>
+        <ErrorView message={message} />
+      </Container>
+    )
+  }
+  NodeView.__id__ = controller.id;
+
+  controller.viewCtx.view = NodeView;
+}
+```
+- 对应样式文件 index.module.scss
+``` scss
+.formField {
+  margin: 5px;
+  padding: 3px;
+  border: 1px dashed #fff;
+  background: #000;
+
+  .comment {
+    color: #40BF40;
+    white-space: pre-wrap;
+  }
+  
+  .fieldName {
+    margin-top: 2px;
+    color: #fff;
+    font-weight: 500;
+
+    .valueVisibleCtrl {
+      display: inline-block;
+      margin-right: 3px;
+      cursor: pointer;
+      transform: rotate(90deg);
+
+      &.fold {
+        transform: rotate(0);
+      }
+    }
+  }
+
+  .fieldValue {
+    margin-top: 2px;
+    overflow-y: hidden;
+    height: auto;
+
+    &.fold {
+      height: 0;
+    }
+  }
+
+  .error {
+    margin-top: 2px;
+    color: #52E052;
+    white-space: pre-wrap;
+
+    &.hidden {
+      display: none;
+    }
+  }
 }
 ```
 ##### 步骤三
@@ -256,40 +327,40 @@ const descriptor = {
 }
 
 const data = {
-    a: 'world',
+  a: 'world',
 }
 ```
 ##### 步骤五
-使用 createViewReact、genMountViewReact 生成动态表单，完整使用示例可参考 demos/react
+使用 createViewReact、genMountViewReact 生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react/src/App.tsx)
 ```tsx
 import { useState, useEffect } from 'react';
 import { Form } from '@form-cross-view/core';
 
 export default function App() {
-    const [formRender, setFormRender] = useState(() => (<></>));
+  const [formRender, setFormRender] = useState(() => (<></>));
 
-    useEffect(() => {
-        const descriptor = { /* ... */};
-        const data = { /* ... */};
-        
-        const formDiv = document.getElementById('form');
-        const formInstance = new Form(
-          formDiv,
-          descriptor,
-          {
-            createView: createViewReact,
-            mountView: genMountViewReact(setFormRender),
-          }
-        );
-        
-        formInstance.setValue(data);
-    }, []);
+  useEffect(() => {
+    const descriptor = { /* ... */};
+    const data = { /* ... */};
+    
+    const formDiv = document.getElementById('form');
+    const formInstance = new Form(
+      formDiv,
+      descriptor,
+      {
+        createView: createViewReact,
+        mountView: genMountViewReact(setFormRender),
+      }
+    );
+    
+    formInstance.setValue(data);
+  }, []);
 
-    return (
-        <>
-            <div id='form'>{formRender}</div>
-        </>
-    )
+  return (
+    <>
+      <div id='form'>{formRender}</div>
+    </>
+  )
 }
 ```
 ###### 效果如下
@@ -320,11 +391,11 @@ const descriptor = {
 }
 
 const data = {
-    a: 'world',
+  a: 'world',
 }
 ```
 ##### 步骤三
-使用视图组件库生成动态表单，完整使用示例可参考 demos/react
+使用视图组件库生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react/src/App.tsx)
 ```tsx
 import { useState, useEffect } from 'react';
 import { Form } from '@form-cross-view/core';
@@ -333,30 +404,30 @@ import { genCreateViewReact, genMountViewReact } from '@form-cross-view/react-vi
 import styles from './App.module.scss';
 
 export default function App() {
-    const [formRender, setFormRender] = useState(() => (<></>));
+  const [formRender, setFormRender] = useState(() => (<></>));
 
-    useEffect(() => {
-        const descriptor = { /* ... */};
-        const data = { /* ... */};
-        
-        const formDiv = document.getElementById('form');
-        const formInstance = new Form(
-          formDiv,
-          descriptor,
-          {
-            createView: genCreateViewReact(), // 这里也可以传入 styles 自定义样式
-            mountView: genMountViewReact(setFormRender),
-          }
-        );
-        
-        formInstance.setValue(data);
-    }, []);
+  useEffect(() => {
+    const descriptor = { /* ... */};
+    const data = { /* ... */};
+    
+    const formDiv = document.getElementById('form');
+    const formInstance = new Form(
+      formDiv,
+      descriptor,
+      {
+        createView: genCreateViewReact(), // 这里也可以传入 styles 自定义样式
+        mountView: genMountViewReact(setFormRender),
+      }
+    );
+    
+    formInstance.setValue(data);
+  }, []);
 
-    return (
-        <>
-            <div id='form'>{formRender}</div>
-        </>
-    )
+  return (
+    <>
+      <div id='form'>{formRender}</div>
+    </>
+  )
 }
 ```
 
@@ -404,24 +475,31 @@ pnpm demo:prd:react
 ###### 步骤七
 完成功能调试后，提交 pr，待作者 cr 后合入分支，发布新版本
 
-### 待办项
+### TODOS
+#### 优化内置视图组件库的开发方式
+```txt
+目标是只写一套代码，自动转成不同框架的代码：
+  原生 DOM 视图，对用户来说性能最好，但对开发来说不够友好？
+```
+#### 完善 @form-cross-view/core
+1. 功能检查
+2. 性能测试、调优
+3. 完善单元测试
 #### 新增标准视图组件库
 1. Ant Design
 2. Element UI
 3. ...
-#### 完善 @form-cross-view/core
-1. 完善单元测试
-2. 性能测试、调优
-3. 功能检查
 #### 维护文档
 
 ### 作者
 #### AlphaLu（阿尔法卢）
-一名前端开发工程师，专注并擅长于重型、复杂前端应用的设计、开发与探索，研究领域包括前端可视化、AI 前端化、前端工程化、H5 游戏引擎等
+
+<strong>一名前端开发工程师，专注并擅长于重型、复杂前端应用的设计、开发与探索，研究领域包括前端可视化、AI 前端化、前端工程化、H5 游戏引擎等
 
 邮箱：LuKick@126.com
 
 掘金：https://juejin.cn/user/1943592291015607
+</strong>
 
 
 ### 版权说明

@@ -2,7 +2,7 @@
   import { shallowRef, onMounted } from 'vue';
   // import FormTest from './Form';
 
-  import { Form } from '@form-cross-view/core';
+  import { Form, FormField } from '@form-cross-view/core';
   import { genCreateViewVue, genMountViewVue } from '@form-cross-view/vue-view';
 
   const formRender = shallowRef(null);
@@ -99,6 +99,37 @@
           mountView: genMountViewVue(setFormRender),
         }
       );
+
+      if (value) {
+        formInstance.setValue(value);
+      }
+
+      formInstance.on(
+      'valuechange',
+      async (valueNew: any, valueOld: any, field: FormField) => {
+        console.log('valueNew', valueNew);
+        console.log('valueOld', valueOld);
+        console.log('changed field', field);
+
+        if (formInstance.isDirty()) {
+          console.log('The form is dirty.');
+        } else {
+          console.log('The form is clean.');
+        }
+
+        if (formInstance.isValid()) {
+          console.log('The form is valid.');
+        } else {
+          console.log('The form is unvalid.');
+        }
+        
+        const error = await formInstance.validate();
+        console.log('form error', error);
+
+        const value = formInstance.getValue();
+        console.log('form value', value);
+      }
+    );
 
       console.log(formInstance);
     }

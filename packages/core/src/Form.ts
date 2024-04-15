@@ -68,7 +68,7 @@ export class Form {
   private _create(descriptor: Descriptor) {
     const descriptorCompiled = compileDescriptor(
       descriptor,
-      ''
+      'root'
     );
 
     // console.log('descriptorCompiled', descriptorCompiled);
