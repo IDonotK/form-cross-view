@@ -1,6 +1,6 @@
 {
   "name": "@form-cross-view/core",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "",
   "main": "dist/index.js",
   "type": "module",
