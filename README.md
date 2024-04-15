@@ -26,7 +26,7 @@
 另外，form-cross-view 内置了一些视图组件，可开箱即用，同时作为自定义视图的参考范例，包括原生 DOM、React、Solid、Vue。</strong>
 
 ## 演示
-- 实现详见 [demos/solid](https://github.com/IDonotK/form-cross-view/blob/main/demos/solid/src/App.tsx)
+- 实现详见 [demos/solid](https://github.com/IDonotK/form-cross-view/blob/main/demos/solid-demo/src/App.tsx)
 
 <img style="max-width: 500px" src="./demo.gif">
 
@@ -331,7 +331,7 @@ const data = {
 }
 ```
 ##### 步骤五
-使用 createViewReact、genMountViewReact 生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react/src/App.tsx)
+使用 createViewReact、genMountViewReact 生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react-demo/src/App.tsx)
 ```tsx
 import { useState, useEffect } from 'react';
 import { Form } from '@form-cross-view/core';
@@ -395,7 +395,7 @@ const data = {
 }
 ```
 ##### 步骤三
-使用视图组件库生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react/src/App.tsx)
+使用视图组件库生成动态表单，完整使用示例可参考 [demos/react](https://github.com/IDonotK/form-cross-view/blob/main/demos/react-demo/src/App.tsx)
 ```tsx
 import { useState, useEffect } from 'react';
 import { Form } from '@form-cross-view/core';

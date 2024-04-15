@@ -19,8 +19,8 @@
     "dynamic-form",
     "async-validator"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "AlphaLu",
+  "license": "MIT",
   "devDependencies": {
     "@types/react": "^18.2.66",
     "classnames": "^2.5.1",

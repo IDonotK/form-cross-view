@@ -7,9 +7,21 @@
   "scripts": {
     "build": "rimraf -rf dist && rollup -c"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IDonotK/form-cross-view.git"
+  },
+  "keywords": [
+    "动态表单",
+    "@form-cross-view",
+    "form-builder",
+    "form",
+    "components",
+    "dynamic-form",
+    "async-validator"
+  ],
+  "author": "AlphaLu",
+  "license": "MIT",
   "devDependencies": {
     "@types/lodash": "^4.17.0",
     "async-validator": "^4.2.5",

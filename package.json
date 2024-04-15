@@ -23,8 +23,17 @@
     "type": "git",
     "url": "git+https://github.com/IDonotK/form-cross-view.git"
   },
+  "keywords": [
+    "动态表单",
+    "@form-cross-view",
+    "form-builder",
+    "form",
+    "components",
+    "dynamic-form",
+    "async-validator"
+  ],
   "author": "AlphaLu",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/IDonotK/form-cross-view/issues"
   },
