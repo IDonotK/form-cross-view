@@ -1,5 +1,11 @@
 # @form-cross-view/core
 
+## 0.0.2
+
+### Patch Changes
+
+- 6ce790a: base
+
 ## 0.0.1
 
 ### Patch Changes
