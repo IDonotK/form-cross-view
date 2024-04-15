@@ -9,6 +9,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IDonotK/form-cross-view.git"
+  },
   "devDependencies": {
     "@types/react": "^18.2.66",
     "classnames": "^2.5.1",
