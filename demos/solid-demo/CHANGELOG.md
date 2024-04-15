@@ -1,5 +1,13 @@
 # solid-demo
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [e55f595]
+  - @form-cross-view/core@0.0.4
+  - @form-cross-view/solid-view@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

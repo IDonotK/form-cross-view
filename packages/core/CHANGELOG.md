@@ -1,5 +1,11 @@
 # @form-cross-view/core
 
+## 0.0.4
+
+### Patch Changes
+
+- e55f595: use lodash-es
+
 ## 0.0.3
 
 ### Patch Changes
