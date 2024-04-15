@@ -364,7 +364,7 @@ export default function App() {
 }
 ```
 ###### 效果如下
-gif
+<img style="max-width: 500px" src="./demos.gif">
 
 #### 使用内置视图组件
 ##### 步骤一
