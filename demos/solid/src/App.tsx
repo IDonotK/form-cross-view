@@ -3,7 +3,7 @@ import { createSignal, onMount } from 'solid-js';
 import { Form } from '@form-cross-view/core';
 import { genCreateViewSolid, genMountViewSolid } from '@form-cross-view/solid-view';
 
-import './App.css';
+import styles from './App.module.scss';
 
 function App() {
   const [formRender, setFormRender] = createSignal(() => (<></>));
@@ -17,14 +17,14 @@ function App() {
   1.小车装有超声波传感器，可检测到前方的石头；
   2.请补充小车的控制逻辑，将石头移出圆形区域。
       `,
+      name: 'settings',
       fields: {
         a: {
           type: 'string',
           required: true,
           defaultValue: 'hello',
-          comment: 'a 的注释',
+          comment: (name: string) => `${name} 的注释`,
           editable: true,
-          name: '哈哈',
         },
         b: {
           type: 'number',
@@ -108,7 +108,7 @@ function App() {
 
   return (
     <>
-      <div id='form'>{formRender()}</div>
+      <div id='form' class={styles.form}>{formRender()}</div>
     </>
   )
 }

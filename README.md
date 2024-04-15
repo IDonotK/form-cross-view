@@ -26,7 +26,7 @@
 另外，form-cross-view 内置了一些视图组件，可开箱即用，同时作为自定义视图的参考范例，包括原生 DOM、React、Solid、Vue。</strong>
 
 ## 演示
-gif
+<img style="max-width: 800px" src="./demo.gif">
 
 ## 目录
 - [演示](#演示)
