@@ -1,5 +1,13 @@
 # react-demo
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [d928fac]
+  - @form-cross-view/core@0.0.3
+  - @form-cross-view/react-view@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

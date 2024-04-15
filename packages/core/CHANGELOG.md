@@ -1,5 +1,11 @@
 # @form-cross-view/core
 
+## 0.0.3
+
+### Patch Changes
+
+- d928fac: base
+
 ## 0.0.2
 
 ### Patch Changes
