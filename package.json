@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/IDonotK/form-cross-view#readme",
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@types/node": "^20.12.7",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitejs/plugin-vue": "^5.0.4",
