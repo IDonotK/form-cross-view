@@ -17,7 +17,7 @@
   </a>
 </p>
 
-<strong>form-cross-view 是一个跨视图表单生成框架，它是基于并扩展了 [async-validator](https://github.com/yiminghe/async-validator) 数据描述规范， 分离了表单逻辑与视图，支持自定义基于不同业务框架、UI 组件库的视图。
+<strong>form-cross-view 是一个跨视图动态表单生成框架，它是基于并扩展了 [async-validator](https://github.com/yiminghe/async-validator) 数据描述规范， 分离了表单逻辑与视图，支持自定义基于不同业务框架、UI 组件库的视图。
 
 你可能出于以下原因选择 form-cross-view，当然前提是你需要一个表单生成组件：
 1. 你需要自定义表单视图，但又不想写表单逻辑（动态渲染、数据收集、数据验证等），一种场景是社区当前没有较好的表单生成方案适合你项目所使用的业务框架（如 Solid）、UI 组件库（如 Hope UI）；
