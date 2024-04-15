@@ -506,7 +506,7 @@ pnpm demo:prd:react
 
 ### 版权说明
 
-该项目签署了 MIT 授权许可，详情请参阅 [LICENSE.txt](https://github.com/IDonotK/form-cross-view/blob/master/LICENSE.txt)
+该项目签署了 MIT 授权许可，详情请参阅 [LICENSE.txt](https://github.com/IDonotK/form-cross-view/blob/master/LICENSE)
 
 
 
