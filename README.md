@@ -56,11 +56,11 @@
 #### 包说明
 | 包名 | 说明 |
 | --- | --- |
-| @form-cross-view/core [![version](https://img.shields.io/npm/v/@form-cross-view/core.svg)](https://www.npmjs.com/package/@form-cross-view/core) [![npm](https://img.shields.io/npm/dt/@form-cross-view/core.svg)](https://www.npmjs.com/package/@form-cross-view/core) | 处理核心表单逻辑，与框架无关 |
-| @form-cross-view/native-view [![version](https://img.shields.io/npm/v/@form-cross-view/native-view.svg)](https://www.npmjs.com/package/@form-cross-view/native-view) [![npm](https://img.shields.io/npm/dt/@form-cross-view/native-view.svg)](https://www.npmjs.com/package/@form-cross-view/native-view) | 原生 DOM 视图组件，与框架无关 |
-| @form-cross-view/react-view [![version](https://img.shields.io/npm/v/@form-cross-view/react-view.svg)](https://www.npmjs.com/package/@form-cross-view/react-view) [![npm](https://img.shields.io/npm/dt/@form-cross-view/react-view.svg)](https://www.npmjs.com/package/@form-cross-view/react-view) | React 视图组件，适用于 React 项目 |
-| @form-cross-view/solid-view [![version](https://img.shields.io/npm/v/@form-cross-view/solid-view.svg)](https://www.npmjs.com/package/@form-cross-view/solid-view) [![npm](https://img.shields.io/npm/dt/@form-cross-view/solid-view.svg)](https://www.npmjs.com/package/@form-cross-view/solid-view) | Solid 视图组件，适用于 Solid 项目 |
-| @form-cross-view/vue-view [![version](https://img.shields.io/npm/v/@form-cross-view/vue-view.svg)](https://www.npmjs.com/package/@form-cross-view/vue-view) [![npm](https://img.shields.io/npm/dt/@form-cross-view/vue-view.svg)](https://www.npmjs.com/package/@form-cross-view/vue-view) | Vue 视图组件，适用于 Vue 项目 |
+| @form-cross-view/core [![version](https://img.shields.io/npm/v/@form-cross-view/core.svg)](https://www.npmjs.com/package/@form-cross-view/core) [![npm](https://img.shields.io/npm/d18m/@form-cross-view/core.svg)](https://www.npmjs.com/package/@form-cross-view/core) | 处理核心表单逻辑，与框架无关 |
+| @form-cross-view/native-view [![version](https://img.shields.io/npm/v/@form-cross-view/native-view.svg)](https://www.npmjs.com/package/@form-cross-view/native-view) [![npm](https://img.shields.io/npm/d18m/@form-cross-view/native-view.svg)](https://www.npmjs.com/package/@form-cross-view/native-view) | 原生 DOM 视图组件，与框架无关 |
+| @form-cross-view/react-view [![version](https://img.shields.io/npm/v/@form-cross-view/react-view.svg)](https://www.npmjs.com/package/@form-cross-view/react-view) [![npm](https://img.shields.io/npm/d18m/@form-cross-view/react-view.svg)](https://www.npmjs.com/package/@form-cross-view/react-view) | React 视图组件，适用于 React 项目 |
+| @form-cross-view/solid-view [![version](https://img.shields.io/npm/v/@form-cross-view/solid-view.svg)](https://www.npmjs.com/package/@form-cross-view/solid-view) [![npm](https://img.shields.io/npm/d18m/@form-cross-view/solid-view.svg)](https://www.npmjs.com/package/@form-cross-view/solid-view) | Solid 视图组件，适用于 Solid 项目 |
+| @form-cross-view/vue-view [![version](https://img.shields.io/npm/v/@form-cross-view/vue-view.svg)](https://www.npmjs.com/package/@form-cross-view/vue-view) [![npm](https://img.shields.io/npm/d18m/@form-cross-view/vue-view.svg)](https://www.npmjs.com/package/@form-cross-view/vue-view) | Vue 视图组件，适用于 Vue 项目 |
 
 ### 上手指南
 
