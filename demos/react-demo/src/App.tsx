@@ -6,7 +6,7 @@ import { genCreateViewReact, genMountViewReact } from '@form-cross-view/react-vi
 import './App.css';
 
 function App() {
-  const [formRender, setFormRender] = useState(() => (<></>));
+  const [formRender, setFormRender] = useState((<></>));
 
   useEffect(() => {
     const descriptor = {

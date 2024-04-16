@@ -304,7 +304,7 @@ function genMountViewReact(setFormRender?: Function) {
     const { viewCtx: { view: NodeView } } = rootFormFiled;
 
     // 渲染根字段的视图组件
-    setFormRender && setFormRender(() => <NodeView />);
+    setFormRender && setFormRender(<NodeView />);
   }
 }
 ```
@@ -337,7 +337,7 @@ import { useState, useEffect } from 'react';
 import { Form } from '@form-cross-view/core';
 
 export default function App() {
-  const [formRender, setFormRender] = useState(() => (<></>));
+  const [formRender, setFormRender] = useState((<></>));
 
   useEffect(() => {
     const descriptor = { /* ... */};
@@ -404,7 +404,7 @@ import { genCreateViewReact, genMountViewReact } from '@form-cross-view/react-vi
 import styles from './App.module.scss';
 
 export default function App() {
-  const [formRender, setFormRender] = useState(() => (<></>));
+  const [formRender, setFormRender] = useState((<></>));
 
   useEffect(() => {
     const descriptor = { /* ... */};

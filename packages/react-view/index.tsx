@@ -249,6 +249,6 @@ export function genMountViewReact(setFormRender?: Function) {
 
     const { viewCtx: { view: NodeView } } = rootFormFiled;
 
-    setFormRender && setFormRender(() => <NodeView />);
+    setFormRender && setFormRender(<NodeView />);
   }
 }

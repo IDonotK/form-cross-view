@@ -6,7 +6,7 @@ import { genCreateViewSolid, genMountViewSolid } from '@form-cross-view/solid-vi
 import styles from './App.module.scss';
 
 function App() {
-  const [formRender, setFormRender] = createSignal(() => (<></>));
+  const [formRender, setFormRender] = createSignal((<></>));
 
   onMount(() => {
     const descriptor = {
