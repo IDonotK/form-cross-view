@@ -1,5 +1,12 @@
 # @form-cross-view/solid-view
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [d61d31a]
+  - @form-cross-view/core@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes

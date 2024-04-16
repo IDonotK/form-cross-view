@@ -1,5 +1,11 @@
 # @form-cross-view/core
 
+## 0.0.5
+
+### Patch Changes
+
+- d61d31a: update readme
+
 ## 0.0.4
 
 ### Patch Changes
