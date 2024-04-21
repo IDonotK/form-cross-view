@@ -23,7 +23,7 @@
 1. 你需要自定义表单视图，但又不想写表单逻辑（动态渲染、数据收集、数据验证等），一种场景是社区当前没有较好的表单生成方案适合你项目所使用的业务框架（如 Solid）、UI 组件库（如 Hope UI）；
 2. 你不想写繁琐的 JSON Schema，并且在某些情况下，你需要自定义单个字段的同步或异步校验逻辑。
 
-另外，form-cross-view 内置了一些视图组件，可开箱即用，同时作为自定义视图的参考范例，包括原生 DOM、React、Solid、Vue。</strong>
+另外，form-cross-view 内置了一些视图组件，作为自定义视图的参考范例，包括原生 DOM、React、Solid、Vue，可开箱即用，但目前只支持部分简单字段类型。</strong>
 
 ## 演示
 - 实现详见 [demos/solid](https://github.com/IDonotK/form-cross-view/blob/main/demos/solid-demo/src/App.tsx)
@@ -478,10 +478,14 @@ pnpm demo:prd:react
 完成功能调试后，提交 pr，待作者 cr 后合入分支，发布新版本
 
 ### TODOS
-#### 优化内置视图组件库的开发方式
+#### 优化内置视图组件库及其开发方式
+1. 只写一套代码，自动转成不同框架的代码
 ```txt
-目标是只写一套代码，自动转成不同框架的代码：
-  原生 DOM 视图，对用户来说性能最好，但对开发来说不够友好？
+原生 DOM 视图，对用户来说性能最好，但对开发来说不够友好？
+```
+2. 完整的解决方案
+```txt
+规范设计风格、补全字段类型
 ```
 #### 完善 @form-cross-view/core
 1. 功能检查
